@@ -71,18 +71,30 @@ export async function GET(request: Request) {
 
   const admin = createAdminClient();
 
-  // Find existing user by email; create if missing.
-  const { data: list } = await admin.auth.admin.listUsers();
-  let userId = list?.users.find((u) => u.email === email)?.id;
+  // 1. Find existing user by LINE user id (most reliable)
+  const { data: existingAccount } = await admin
+    .from("line_accounts")
+    .select("profile_id")
+    .eq("line_user_id", lineUserId)
+    .maybeSingle();
+  let userId = existingAccount?.profile_id as string | undefined;
 
+  // 2. Fall back to email lookup
+  if (!userId) {
+    const { data: list } = await admin.auth.admin.listUsers({ page: 1, perPage: 1000 });
+    userId = list?.users.find((u) => u.email === email)?.id;
+  }
+
+  // 3. Create user if still not found
   if (!userId) {
     const { data: created, error: createErr } = await admin.auth.admin.createUser({
       email,
       email_confirm: true,
       user_metadata: { full_name: displayName, line_user_id: lineUserId },
     });
-    if (createErr || !created.user) {
-      return NextResponse.redirect(`${origin}/login?error=line_create`);
+    if (createErr || !created?.user) {
+      const detail = encodeURIComponent(createErr?.message ?? "unknown");
+      return NextResponse.redirect(`${origin}/login?error=line_create&detail=${detail}`);
     }
     userId = created.user.id;
   }
@@ -103,7 +115,8 @@ export async function GET(request: Request) {
   });
 
   if (linkErr || !linkData) {
-    return NextResponse.redirect(`${origin}/login?error=line_link`);
+    const detail = encodeURIComponent(linkErr?.message ?? "unknown");
+    return NextResponse.redirect(`${origin}/login?error=line_link&detail=${detail}`);
   }
 
   return NextResponse.redirect(linkData.properties.action_link);

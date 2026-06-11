@@ -43,7 +43,10 @@ export default function LoginPage() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const authError = params.get("error");
-    if (authError) setError(authMessage(authError));
+    if (authError) {
+      const detail = params.get("detail");
+      setError(authMessage(authError) + (detail ? ` (${detail})` : ""));
+    }
   }, []);
 
   async function handleEmailAuth(e: React.FormEvent) {
