@@ -1,5 +1,12 @@
 import { NextResponse } from "next/server";
+import { getAppOrigin } from "@/lib/app-url";
 import { createAdminClient } from "@/lib/supabase/admin";
+
+function configuredValue(value: string | undefined) {
+  const trimmed = value?.trim();
+  if (!trimmed || trimmed.startsWith("YOUR_") || trimmed === "CHANGE_ME") return null;
+  return trimmed;
+}
 
 /**
  * LINE Login callback. Exchanges the code for an id_token, derives the user,
@@ -10,7 +17,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
  */
 export async function GET(request: Request) {
   const url = new URL(request.url);
-  const origin = url.origin;
+  const origin = getAppOrigin(request.url);
   const code = url.searchParams.get("code");
   const state = url.searchParams.get("state");
   const cookieState = request.headers
@@ -24,8 +31,11 @@ export async function GET(request: Request) {
     return NextResponse.redirect(`${origin}/login?error=line_state`);
   }
 
-  const channelId = process.env.LINE_LOGIN_CHANNEL_ID!;
-  const channelSecret = process.env.LINE_LOGIN_CHANNEL_SECRET!;
+  const channelId = configuredValue(process.env.LINE_LOGIN_CHANNEL_ID);
+  const channelSecret = configuredValue(process.env.LINE_LOGIN_CHANNEL_SECRET);
+  if (!channelId || !channelSecret) {
+    return NextResponse.redirect(`${origin}/login?error=line_not_configured`);
+  }
 
   // Exchange code for tokens
   const tokenRes = await fetch("https://api.line.me/oauth2/v2.1/token", {

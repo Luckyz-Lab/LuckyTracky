@@ -1,17 +1,25 @@
 import { NextResponse } from "next/server";
 import { randomBytes } from "crypto";
+import { getAppOrigin, getAppUrl } from "@/lib/app-url";
+
+function configuredValue(value: string | undefined) {
+  const trimmed = value?.trim();
+  if (!trimmed || trimmed.startsWith("YOUR_") || trimmed === "CHANGE_ME") return null;
+  return trimmed;
+}
 
 /**
  * Begins LINE Login (OIDC). Redirects the user to LINE's authorize endpoint.
  * Requires a LINE Login channel (separate from the Messaging API channel).
  */
 export async function GET(request: Request) {
-  const channelId = process.env.LINE_LOGIN_CHANNEL_ID;
-  if (!channelId) {
-    return NextResponse.redirect(new URL("/login?error=line_not_configured", request.url));
+  const channelId = configuredValue(process.env.LINE_LOGIN_CHANNEL_ID);
+  const channelSecret = configuredValue(process.env.LINE_LOGIN_CHANNEL_SECRET);
+  if (!channelId || !channelSecret) {
+    return NextResponse.redirect(getAppUrl(request.url, "/login?error=line_not_configured"));
   }
 
-  const origin = new URL(request.url).origin;
+  const origin = getAppOrigin(request.url);
   const state = randomBytes(16).toString("hex");
   const nonce = randomBytes(16).toString("hex");
 

@@ -1,9 +1,34 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Wallet, Loader2 } from "lucide-react";
+
+function authMessage(message: string) {
+  const messages: Record<string, string> = {
+    line_not_configured:
+      "LINE Login is not configured. Set LINE_LOGIN_CHANNEL_ID and LINE_LOGIN_CHANNEL_SECRET in .env.local.",
+    line_state: "LINE login session expired. Please try again.",
+    line_token: "LINE login failed while requesting a LINE access token.",
+    line_idtoken: "LINE login did not return an identity token.",
+    line_create: "LINE login could not create a Supabase user.",
+    line_link: "LINE login could not create a Supabase session.",
+    google_not_configured:
+      "Google sign-in is not enabled in Supabase. Enable the Google provider in Supabase Auth first.",
+    auth: "Authentication failed. Please try again.",
+  };
+
+  return messages[message] ?? message;
+}
+
+function getBrowserOrigin() {
+  const url = new URL(window.location.href);
+  if (url.hostname === "0.0.0.0") {
+    url.hostname = "localhost";
+  }
+  return url.origin;
+}
 
 export default function LoginPage() {
   const router = useRouter();
@@ -12,23 +37,39 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const authError = params.get("error");
+    if (authError) setError(authMessage(authError));
+  }, []);
 
   async function handleEmailAuth(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    setMessage(null);
     setLoading(true);
     const supabase = createClient();
     try {
       if (mode === "signup") {
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
-          options: { data: { full_name: name } },
+          options: {
+            data: { full_name: name.trim() || email.split("@")[0] },
+            emailRedirectTo: `${getBrowserOrigin()}/auth/callback?next=/dashboard`,
+          },
         });
         if (error) throw error;
-        router.push("/dashboard");
-        router.refresh();
+        if (data.session) {
+          router.push("/dashboard");
+          router.refresh();
+        } else {
+          setMode("signin");
+          setMessage("Account created. Check your email to confirm your account, then sign in.");
+        }
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
@@ -40,20 +81,6 @@ export default function LoginPage() {
     } finally {
       setLoading(false);
     }
-  }
-
-  async function handleGoogle() {
-    setError(null);
-    const supabase = createClient();
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo: `${window.location.origin}/auth/callback` },
-    });
-    if (error) setError(error.message);
-  }
-
-  function handleLine() {
-    window.location.href = "/api/auth/line/start";
   }
 
   return (
@@ -110,6 +137,7 @@ export default function LoginPage() {
           </div>
 
           {error && <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{error}</p>}
+          {message && <p className="rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-700">{message}</p>}
 
           <button type="submit" className="btn-primary w-full" disabled={loading}>
             {loading && <Loader2 className="animate-spin" size={16} />}
@@ -122,12 +150,12 @@ export default function LoginPage() {
         </div>
 
         <div className="space-y-2">
-          <button onClick={handleGoogle} className="btn-outline w-full">
+          <a href="/auth/google?next=/dashboard" className="btn-outline w-full">
             Continue with Google
-          </button>
-          <button onClick={handleLine} className="btn w-full bg-[#06C755] text-white hover:bg-[#05b34c]">
+          </a>
+          <a href="/api/auth/line/start" className="btn w-full bg-[#06C755] text-white hover:bg-[#05b34c]">
             Continue with LINE
-          </button>
+          </a>
         </div>
 
         <p className="mt-6 text-center text-sm text-zinc-500">
