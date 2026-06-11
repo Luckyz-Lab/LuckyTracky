@@ -46,7 +46,7 @@ export default function ChatPanel({ householdId }: { householdId: string | null 
       });
       const data: ChatResponse = await res.json();
       setMessages((m) => [...m, { id: crypto.randomUUID(), role: "bot", response: data }]);
-      if (data.kind === "saved") router.refresh();
+      if (data.kind === "saved" || data.kind === "saved_many") router.refresh();
     } catch {
       setMessages((m) => [
         ...m,
@@ -147,6 +147,15 @@ function Message({
 
   const r = bubble.response!;
   if (r.kind === "saved") return <TxCard tx={r.transaction} tone="saved" />;
+  if (r.kind === "saved_many")
+    return (
+      <div className="space-y-2">
+        <p className="text-sm font-medium text-brand-600">{r.message}</p>
+        {r.transactions.map((tx, index) => (
+          <TxCard key={`${tx.item}-${tx.amount}-${index}`} tx={tx} tone="saved" />
+        ))}
+      </div>
+    );
   if (r.kind === "confirm")
     return (
       <div className="space-y-2">

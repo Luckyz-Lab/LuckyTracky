@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import { extractAmount, cleanTransactionItem, parseAmountValue } from "../moneyParser";
 import { classifyByKeyword, categorizeByKeyword } from "../categories";
 import { isAmbiguousTransactionText, shouldAutoSaveTransaction } from "../transactionRules";
+import { parseMultipleTransactions, splitTransactionSegments } from "../multiTransactionParser";
 import { isValidDate, parseDateFromText } from "../dateParser";
 import type { ParsedTransaction } from "../types";
 
@@ -81,5 +82,27 @@ describe("dateParser", () => {
 
   it("parses DD/MM/YYYY", () => {
     expect(parseDateFromText("ค่าน้ำ 300 15/01/2025")).toBe("2025-01-15");
+  });
+});
+
+describe("multiTransactionParser", () => {
+  it("splits multiple item and amount pairs from one message", () => {
+    const text = "หอ 3500 ค่าไฟ 1314 ค่าน้ำ 40\nรองเท้า 4158 เสื้อผ้า 1084";
+
+    expect(splitTransactionSegments(text)).toEqual([
+      "หอ 3500",
+      "ค่าไฟ 1314",
+      "ค่าน้ำ 40",
+      "รองเท้า 4158",
+      "เสื้อผ้า 1084",
+    ]);
+  });
+
+  it("parses each split transaction independently", () => {
+    const parsed = parseMultipleTransactions("หอ 3500 ค่าไฟ 1314 ค่าน้ำ 40 รองเท้า 4158 เสื้อผ้า 1084");
+
+    expect(parsed.map((tx) => tx.amount)).toEqual([3500, 1314, 40, 4158, 1084]);
+    expect(parsed.map((tx) => tx.item)).toEqual(["หอ", "ค่าไฟ", "ค่าน้ำ", "รองเท้า", "เสื้อผ้า"]);
+    expect(parsed.every((tx) => tx.missing_fields.length === 0)).toBe(true);
   });
 });

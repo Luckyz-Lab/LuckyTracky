@@ -22,6 +22,18 @@ function responseToMessages(r: ChatResponse): unknown[] {
       const sign = t.type === "รายรับ" ? "+" : "-";
       return [textMessage(`Saved: ${t.item} ${sign}${formatMoney(t.amount ?? 0)} (${t.category})`)];
     }
+    case "saved_many":
+      return [
+        textMessage(
+          [
+            r.message,
+            ...r.transactions.map((t) => {
+              const sign = t.type === "รายรับ" ? "+" : "-";
+              return `- ${t.item} ${sign}${formatMoney(t.amount ?? 0)} (${t.category})`;
+            }),
+          ].join("\n")
+        ),
+      ];
     case "confirm":
       return [confirmTemplate(`${r.transaction.item} ${formatMoney(r.transaction.amount ?? 0)} — save this?`, r.pendingId)];
     case "missing":

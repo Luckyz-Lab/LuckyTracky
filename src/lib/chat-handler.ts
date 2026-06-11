@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { parseExpenseMessage } from "@/lib/parser/gemini";
+import { parseMultipleTransactions } from "@/lib/parser/multiTransactionParser";
 import { shouldAutoSaveTransaction } from "@/lib/parser/transactionRules";
 import { saveTransaction } from "@/lib/transactions";
 import { formatMoney, currentMonth } from "@/lib/utils";
@@ -79,6 +80,39 @@ export async function handleChatMessage({
 }: HandleChatArgs): Promise<ChatResponse> {
   if (isSummaryRequest(message)) {
     return { kind: "summary", message: await buildMonthSummary(supabase, householdId) };
+  }
+
+  const parsedTransactions = parseMultipleTransactions(message);
+  if (parsedTransactions.length > 1) {
+    const invalid = parsedTransactions.find((parsed) => parsed.missing_fields.includes("amount") || parsed.missing_fields.includes("item"));
+    if (invalid) {
+      return {
+        kind: "missing",
+        transaction: toPayload(invalid),
+        missing: invalid.missing_fields,
+        message: `I found multiple items, but one is missing details: "${invalid.item ?? message}". Please send each item with an amount.`,
+      };
+    }
+
+    try {
+      for (const parsed of parsedTransactions) {
+        await saveTransaction(supabase, {
+          householdId,
+          createdBy: profileId,
+          parsed,
+          source,
+          rawInput: message,
+        });
+      }
+
+      return {
+        kind: "saved_many",
+        transactions: parsedTransactions.map(toPayload),
+        message: `Saved ${parsedTransactions.length} transactions`,
+      };
+    } catch (err) {
+      return { kind: "error", message: (err as Error).message };
+    }
   }
 
   const parsed = await parseExpenseMessage(message);
