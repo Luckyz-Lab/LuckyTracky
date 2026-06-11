@@ -1,0 +1,65 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { ChevronDown, Check, Home } from "lucide-react";
+import type { Household } from "@/lib/supabase/types";
+
+export default function HouseholdSwitcher({
+  households,
+  active,
+}: {
+  households: Household[];
+  active: Household | null;
+}) {
+  const router = useRouter();
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  async function select(id: string) {
+    if (id === active?.id) {
+      setOpen(false);
+      return;
+    }
+    setLoading(true);
+    await fetch("/api/household/active", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ householdId: id }),
+    });
+    setOpen(false);
+    setLoading(false);
+    router.refresh();
+  }
+
+  return (
+    <div className="relative">
+      <button
+        onClick={() => setOpen((o) => !o)}
+        disabled={loading}
+        className="flex w-full items-center justify-between gap-2 rounded-xl border border-zinc-200 bg-white px-3 py-2 text-left text-sm hover:bg-zinc-50"
+      >
+        <span className="flex items-center gap-2 truncate">
+          <Home size={16} className="text-brand-600" />
+          <span className="truncate font-medium">{active?.name ?? "No household"}</span>
+        </span>
+        <ChevronDown size={16} className="text-zinc-400" />
+      </button>
+
+      {open && (
+        <div className="absolute z-20 mt-1 w-full overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-lg">
+          {households.map((h) => (
+            <button
+              key={h.id}
+              onClick={() => select(h.id)}
+              className="flex w-full items-center justify-between px-3 py-2 text-left text-sm hover:bg-zinc-50"
+            >
+              <span className="truncate">{h.name}</span>
+              {h.id === active?.id && <Check size={15} className="text-brand-600" />}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
