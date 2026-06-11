@@ -32,13 +32,13 @@ export default function AiSummaryButton({
   }
 
   return (
-    <div>
-      <button onClick={generate} disabled={loading} className="btn-outline text-xs">
-        {loading ? <Loader2 size={14} className="animate-spin" /> : <Sparkles size={14} className="text-brand-600" />}
+    <div className="max-w-md">
+      <button onClick={generate} disabled={loading} className="btn-outline text-sm">
+        {loading ? <Loader2 size={14} className="animate-spin" /> : <Sparkles size={14} className="text-brand-700" />}
         AI summary
       </button>
       {summary && (
-        <p className="mt-3 whitespace-pre-line rounded-xl bg-brand-50 p-3 text-sm text-zinc-700">{summary}</p>
+        <p className="mt-3 whitespace-pre-line rounded-lg border border-brand-100 bg-brand-50 p-3 text-sm leading-6 text-slate-700 shadow-sm">{summary}</p>
       )}
     </div>
   );

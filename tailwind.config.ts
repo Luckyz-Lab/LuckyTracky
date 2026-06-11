@@ -21,7 +21,7 @@ const config: Config = {
         },
       },
       fontFamily: {
-        sans: ["var(--font-sans)", "system-ui", "sans-serif"],
+        sans: ["var(--font-sans)", "Noto Sans Thai", "Leelawadee UI", "Tahoma", "system-ui", "sans-serif"],
       },
     },
   },

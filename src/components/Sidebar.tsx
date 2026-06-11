@@ -37,18 +37,20 @@ export default function Sidebar() {
             key={href}
             href={href}
             className={cn(
-              "flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition-colors",
-              active ? "bg-brand-50 text-brand-700" : "text-zinc-600 hover:bg-zinc-100"
+              "flex min-h-10 items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+              active
+                ? "bg-slate-950 text-white shadow-sm"
+                : "text-slate-600 hover:bg-slate-100 hover:text-slate-950"
             )}
           >
-            <Icon size={18} />
+            <Icon size={18} className={active ? "text-brand-200" : "text-slate-400"} />
             {label}
           </Link>
         );
       })}
 
       <form action="/auth/signout" method="post" className="mt-auto pt-2">
-        <button type="submit" className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-zinc-500 hover:bg-zinc-100">
+        <button type="submit" className="flex min-h-10 w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-slate-500 hover:bg-slate-100 hover:text-slate-900">
           <LogOut size={18} />
           Sign out
         </button>

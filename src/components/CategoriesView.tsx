@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, Loader2, Eye, EyeOff } from "lucide-react";
+import { getCategoryTone } from "@/lib/category-colors";
 import type { Category } from "@/lib/supabase/types";
 
 export default function CategoriesView({
@@ -52,8 +53,8 @@ export default function CategoriesView({
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="text-2xl font-bold">Categories</h1>
-        <p className="text-sm text-zinc-500">Manage categories and parser keywords</p>
+        <h1 className="page-title">Categories</h1>
+        <p className="page-subtitle">Manage categories and parser keywords</p>
       </header>
 
       <section className="card flex flex-wrap items-end gap-3 p-4">
@@ -101,10 +102,10 @@ function CategoryList({
       <ul className="divide-y divide-zinc-100">
         {items.map((c) => (
           <li key={c.id} className={`flex items-center justify-between py-2.5 ${c.is_active ? "" : "opacity-50"}`}>
-            <div>
-              <p className="text-sm font-medium">{c.name}</p>
+            <div className="min-w-0">
+              <CategoryLabel name={c.name} />
               {c.keywords.length > 0 && (
-                <p className="text-xs text-zinc-400">{c.keywords.slice(0, 6).join(", ")}</p>
+                <p className="mt-1 truncate text-xs text-zinc-400">{c.keywords.slice(0, 6).join(", ")}</p>
               )}
             </div>
             <button onClick={() => onToggle(c)} className="text-zinc-400 hover:text-zinc-700" title={c.is_active ? "Hide" : "Show"}>
@@ -115,5 +116,18 @@ function CategoryList({
         {items.length === 0 && <li className="py-3 text-sm text-zinc-400">None</li>}
       </ul>
     </section>
+  );
+}
+
+function CategoryLabel({ name }: { name: string }) {
+  const tone = getCategoryTone(name);
+  return (
+    <span
+      className="inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-xs font-semibold"
+      style={{ backgroundColor: tone.bg, borderColor: tone.border, color: tone.text }}
+    >
+      <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: tone.dot }} />
+      {name}
+    </span>
   );
 }

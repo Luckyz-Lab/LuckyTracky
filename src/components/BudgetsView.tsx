@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2, Trash2 } from "lucide-react";
 import type { Category, Budget } from "@/lib/supabase/types";
+import { getCategoryTone } from "@/lib/category-colors";
 import { formatMoney, monthLabel } from "@/lib/utils";
 
 interface BudgetRow extends Budget {
@@ -50,8 +51,8 @@ export default function BudgetsView({
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="text-2xl font-bold">Budgets</h1>
-        <p className="text-sm text-zinc-500">{monthLabel(month)} category limits</p>
+        <h1 className="page-title">Budgets</h1>
+        <p className="page-subtitle">{monthLabel(month)} category limits</p>
       </header>
 
       <section className="card flex flex-wrap items-end gap-3 p-4">
@@ -82,10 +83,18 @@ export default function BudgetsView({
           <div className="space-y-4">
             {budgets.map((b) => {
               const pct = b.limit_amount ? Math.round((b.spent / Number(b.limit_amount)) * 100) : 0;
+              const tone = getCategoryTone(b.category_name);
+              const statusColor = pct >= 100 ? "#e11d48" : pct >= 85 ? "#d97706" : tone.fill;
               return (
-                <div key={b.id}>
+                <div key={b.id} className="rounded-lg border border-slate-200 bg-white p-3">
                   <div className="mb-1 flex items-center justify-between text-sm">
-                    <span className="font-medium">{b.category_name}</span>
+                    <span
+                      className="inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-xs font-semibold"
+                      style={{ backgroundColor: tone.bg, borderColor: tone.border, color: tone.text }}
+                    >
+                      <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: tone.dot }} />
+                      {b.category_name}
+                    </span>
                     <span className="flex items-center gap-3">
                       <span className="text-zinc-500">
                         {formatMoney(b.spent, currency)} / {formatMoney(Number(b.limit_amount), currency)}
@@ -97,8 +106,8 @@ export default function BudgetsView({
                   </div>
                   <div className="h-2 overflow-hidden rounded-full bg-zinc-100">
                     <div
-                      className={`h-full rounded-full ${pct >= 100 ? "bg-rose-500" : pct >= 85 ? "bg-amber-500" : "bg-brand-500"}`}
-                      style={{ width: `${Math.min(pct, 100)}%` }}
+                      className="h-full rounded-full"
+                      style={{ width: `${Math.min(pct, 100)}%`, backgroundColor: statusColor }}
                     />
                   </div>
                   <p className="mt-0.5 text-xs text-zinc-400">{pct}% used</p>

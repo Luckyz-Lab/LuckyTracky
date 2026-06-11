@@ -77,9 +77,12 @@ export default function ChatPanel({ householdId }: { householdId: string | null 
 
   return (
     <div className="flex h-full flex-col">
-      <div className="flex items-center gap-2 border-b border-zinc-200 px-4 py-3">
-        <Sparkles size={16} className="text-brand-600" />
-        <h2 className="text-sm font-semibold">Quick add</h2>
+      <div className="flex items-center gap-2 border-b border-slate-200 px-4 py-3">
+        <Sparkles size={16} className="text-brand-700" />
+        <div>
+          <h2 className="text-sm font-semibold text-slate-900">Quick add</h2>
+          <p className="text-xs text-slate-500">Natural-language logging</p>
+        </div>
       </div>
 
       <div ref={scrollRef} className="flex-1 space-y-3 overflow-y-auto p-4">
@@ -87,16 +90,16 @@ export default function ChatPanel({ householdId }: { householdId: string | null 
           <Message key={b.id} bubble={b} onConfirm={confirm} />
         ))}
         {loading && (
-          <div className="flex items-center gap-2 text-sm text-zinc-400">
+          <div className="flex items-center gap-2 text-sm text-slate-400">
             <Loader2 size={14} className="animate-spin" /> thinking...
           </div>
         )}
       </div>
 
-      <div className="border-t border-zinc-200 p-3">
+      <div className="border-t border-slate-200 p-3">
         <div className="flex items-end gap-2">
           <textarea
-            className="input max-h-28 min-h-[40px] resize-none"
+            className="input max-h-28 min-h-[44px] resize-none"
             rows={1}
             value={input}
             placeholder={householdId ? "กินข้าว 80" : "No household selected"}
@@ -138,7 +141,7 @@ function Message({
   if (bubble.text) {
     return (
       <div className="flex justify-start">
-        <div className="max-w-[85%] rounded-2xl rounded-bl-sm bg-zinc-100 px-3 py-2 text-sm text-zinc-700">
+        <div className="max-w-[85%] rounded-lg rounded-bl-sm bg-slate-100 px-3 py-2 text-sm leading-6 text-slate-700">
           {bubble.text}
         </div>
       </div>
@@ -150,7 +153,7 @@ function Message({
   if (r.kind === "saved_many")
     return (
       <div className="space-y-2">
-        <p className="text-sm font-medium text-brand-600">{r.message}</p>
+        <p className="text-sm font-semibold text-brand-700">{r.message}</p>
         {r.transactions.map((tx, index) => (
           <TxCard key={`${tx.item}-${tx.amount}-${index}`} tx={tx} tone="saved" />
         ))}
@@ -159,7 +162,7 @@ function Message({
   if (r.kind === "confirm")
     return (
       <div className="space-y-2">
-        <p className="text-sm text-zinc-600">{r.message}</p>
+        <p className="text-sm text-slate-600">{r.message}</p>
         <TxCard tx={r.transaction} tone="confirm" />
         <div className="flex gap-2">
           <button onClick={() => onConfirm(r.pendingId, "confirm")} className="btn-primary flex-1 py-1.5 text-xs">
@@ -173,18 +176,18 @@ function Message({
     );
   if (r.kind === "missing")
     return (
-      <div className="rounded-2xl rounded-bl-sm bg-amber-50 px-3 py-2 text-sm text-amber-700">
+      <div className="rounded-lg rounded-bl-sm bg-amber-50 px-3 py-2 text-sm text-amber-700">
         {r.message}
       </div>
     );
   if (r.kind === "summary")
     return (
-      <div className="rounded-2xl rounded-bl-sm bg-zinc-100 px-3 py-2 text-sm text-zinc-700 whitespace-pre-line">
+      <div className="rounded-lg rounded-bl-sm bg-slate-100 px-3 py-2 text-sm leading-6 text-slate-700 whitespace-pre-line">
         {r.message}
       </div>
     );
   return (
-    <div className="rounded-2xl rounded-bl-sm bg-red-50 px-3 py-2 text-sm text-red-600">{r.message}</div>
+    <div className="rounded-lg rounded-bl-sm bg-red-50 px-3 py-2 text-sm text-red-600">{r.message}</div>
   );
 }
 
@@ -192,7 +195,7 @@ function TxCard({ tx, tone }: { tx: ChatTransactionPayload; tone: "saved" | "con
   const income = tx.type === "รายรับ";
   return (
     <div className="card p-3">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           {income ? (
             <ArrowDownCircle size={18} className="text-brand-600" />
@@ -200,13 +203,13 @@ function TxCard({ tx, tone }: { tx: ChatTransactionPayload; tone: "saved" | "con
             <ArrowUpCircle size={18} className="text-rose-500" />
           )}
           <div>
-            <p className="text-sm font-medium">{tx.item}</p>
-            <p className="text-xs text-zinc-400">
+            <p className="text-sm font-semibold text-slate-900">{tx.item}</p>
+            <p className="text-xs text-slate-400">
               {tx.category} · {tx.date}
             </p>
           </div>
         </div>
-        <p className={income ? "font-semibold text-brand-600" : "font-semibold text-rose-500"}>
+        <p className={income ? "metric-number text-sm text-brand-700" : "metric-number text-sm text-rose-600"}>
           {income ? "+" : "-"}
           {tx.amount != null ? formatMoney(tx.amount) : "?"}
         </p>

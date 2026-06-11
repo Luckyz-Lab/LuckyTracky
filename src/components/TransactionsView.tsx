@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { Plus, Search, Trash2, Pencil, X, Loader2, ArrowDownCircle, ArrowUpCircle, Download } from "lucide-react";
 import type { Transaction, Category } from "@/lib/supabase/types";
+import { getCategoryTone } from "@/lib/category-colors";
 import { formatMoney } from "@/lib/utils";
 
 interface Props {
@@ -103,8 +104,8 @@ export default function TransactionsView({ householdId, currency, categories }: 
     <div className="space-y-4">
       <header className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Transactions</h1>
-          <p className="text-sm text-zinc-500">{rows.length} records</p>
+          <h1 className="page-title">Transactions</h1>
+          <p className="page-subtitle">{rows.length} records</p>
         </div>
         <div className="flex gap-2">
           <a
@@ -167,7 +168,9 @@ export default function TransactionsView({ householdId, currency, categories }: 
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-100">
-              {rows.map((t) => (
+              {rows.map((t) => {
+                const tone = getCategoryTone(t.category_name);
+                return (
                 <tr key={t.id} className="hover:bg-zinc-50">
                   <td className="px-4 py-3">
                     <span className="flex items-center gap-2">
@@ -179,7 +182,15 @@ export default function TransactionsView({ householdId, currency, categories }: 
                       {t.item}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-zinc-500">{t.category_name}</td>
+                  <td className="px-4 py-3 text-zinc-500">
+                    <span
+                      className="inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-xs font-semibold"
+                      style={{ backgroundColor: tone.bg, borderColor: tone.border, color: tone.text }}
+                    >
+                      <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: tone.dot }} />
+                      {t.category_name}
+                    </span>
+                  </td>
                   <td className="px-4 py-3 text-zinc-500">{t.date}</td>
                   <td className={`px-4 py-3 text-right font-medium ${t.type === "income" ? "text-brand-600" : "text-rose-500"}`}>
                     {t.type === "income" ? "+" : "-"}
@@ -196,7 +207,8 @@ export default function TransactionsView({ householdId, currency, categories }: 
                     </div>
                   </td>
                 </tr>
-              ))}
+                );
+              })}
             </tbody>
           </table>
         )}
