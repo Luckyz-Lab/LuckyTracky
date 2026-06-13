@@ -1,6 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { parseExpenseMessage } from "@/lib/parser/gemini";
 import { parseMultipleTransactions } from "@/lib/parser/multiTransactionParser";
+import { parseInvestmentMessage } from "@/lib/parser/investmentParser";
 import { shouldAutoSaveTransaction } from "@/lib/parser/transactionRules";
 import { saveTransaction } from "@/lib/transactions";
 import { formatMoney, currentMonth } from "@/lib/utils";
@@ -80,6 +81,30 @@ export async function handleChatMessage({
 }: HandleChatArgs): Promise<ChatResponse> {
   if (isSummaryRequest(message)) {
     return { kind: "summary", message: await buildMonthSummary(supabase, householdId) };
+  }
+
+  // Fast-path: pure stock-ticker messages (e.g. "SPCX 2000 RKLB 5000")
+  const investmentParsed = parseInvestmentMessage(message);
+  if (investmentParsed && investmentParsed.length > 0) {
+    try {
+      for (const parsed of investmentParsed) {
+        await saveTransaction(supabase, { householdId, createdBy: profileId, parsed, source, rawInput: message });
+      }
+      if (investmentParsed.length === 1) {
+        return {
+          kind: "saved",
+          transaction: toPayload(investmentParsed[0]),
+          message: `บันทึกลงทุน ${investmentParsed[0].item} ${investmentParsed[0].amount?.toLocaleString()} บาท`,
+        };
+      }
+      return {
+        kind: "saved_many",
+        transactions: investmentParsed.map(toPayload),
+        message: `บันทึกการลงทุน ${investmentParsed.length} รายการ`,
+      };
+    } catch (err) {
+      return { kind: "error", message: (err as Error).message };
+    }
   }
 
   const parsedTransactions = parseMultipleTransactions(message);

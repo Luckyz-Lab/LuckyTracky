@@ -44,6 +44,10 @@ export const EXPENSE_CATEGORIES: CategorySeed[] = [
     name: "บันเทิง",
     keywords: ["หนัง", "เกม", "Netflix", "Spotify", "YouTube", "คอนเสิร์ต", "ท่องเที่ยว", "สวนสนุก"],
   },
+  {
+    name: "ลงทุน",
+    keywords: ["หุ้น", "กองทุน", "ลงทุน", "ETF", "crypto", "บิตคอยน์", "bitcoin", "DCA", "ซื้อหุ้น", "LTF", "RMF", "SSF"],
+  },
 ];
 
 export const INCOME_CATEGORIES: CategorySeed[] = [
@@ -59,7 +63,7 @@ export const INCOME_KEYWORDS = ["เงินเดือน", "โบนัส"
 
 export const ALL_CATEGORIES = [
   "อาหาร", "เดินทาง", "ที่พัก", "ค่าน้ำค่าไฟ", "ช้อปปิ้ง",
-  "สุขภาพ", "การศึกษา", "บันเทิง",
+  "สุขภาพ", "การศึกษา", "บันเทิง", "ลงทุน",
   "เงินเดือน", "โบนัส", "งานเสริม", "ขายของ", "ของขวัญ",
   "อื่นๆ",
 ];
