@@ -8,10 +8,15 @@ import { getCategoryTone } from "@/lib/category-colors";
 import { currentMonth, formatMoney, monthLabel } from "@/lib/utils";
 import { DonutChart } from "@/components/charts";
 import AiSummaryButton from "@/components/AiSummaryButton";
+import MonthSwitcher from "@/components/MonthSwitcher";
 
 export const dynamic = "force-dynamic";
 
-export default async function DashboardPage() {
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: { month?: string };
+}) {
   const ctx = await getHouseholdContext();
   if (!ctx) redirect("/login");
   if (!ctx.activeHousehold) {
@@ -19,22 +24,24 @@ export default async function DashboardPage() {
   }
 
   const supabase = createClient();
-  const month = currentMonth();
+  const raw = searchParams.month;
+  const month = /^\d{4}-\d{2}$/.test(raw ?? "") ? raw! : currentMonth();
   const data = await getDashboardData(supabase, ctx.activeHousehold.id, month);
   const currency = ctx.activeHousehold.currency;
   const savingsRate = data.income > 0 ? Math.round((data.balance / data.income) * 100) : null;
 
   return (
     <div className="space-y-6">
-      <header className="flex flex-col gap-4 border-b border-slate-200 pb-5 md:flex-row md:items-end md:justify-between">
+      <header className="flex flex-col gap-4 border-b border-slate-200 dark:border-slate-800 pb-5 md:flex-row md:items-end md:justify-between">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-700">Household overview</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-700 dark:text-brand-400">Household overview</p>
           <h1 className="page-title mt-2">Dashboard</h1>
-          <p className="page-subtitle">
-            {monthLabel(month)} · {ctx.activeHousehold.name}
-          </p>
+          <p className="page-subtitle">{ctx.activeHousehold.name}</p>
         </div>
-        <AiSummaryButton householdId={ctx.activeHousehold.id} month={month} />
+        <div className="flex flex-wrap items-center gap-3">
+          <MonthSwitcher month={month} />
+          <AiSummaryButton householdId={ctx.activeHousehold.id} month={month} />
+        </div>
       </header>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">

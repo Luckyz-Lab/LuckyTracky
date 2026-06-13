@@ -25,34 +25,49 @@ const NAV = [
   { href: "/settings", label: "Settings", icon: Settings },
 ];
 
-export default function Sidebar() {
+export default function Sidebar({ collapsed = false }: { collapsed?: boolean }) {
   const pathname = usePathname();
 
   return (
-    <nav className="flex flex-1 flex-col gap-1">
+    <nav className="flex flex-1 flex-col gap-1 min-w-0">
       {NAV.map(({ href, label, icon: Icon }) => {
         const active = pathname === href || pathname.startsWith(href + "/");
         return (
           <Link
             key={href}
             href={href}
+            title={collapsed ? label : undefined}
             className={cn(
-              "flex min-h-10 items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+              "flex min-h-10 items-center rounded-lg transition-colors",
+              collapsed ? "justify-center px-2 py-2" : "gap-3 px-3 py-2 text-sm font-medium",
               active
-                ? "bg-slate-950 text-white shadow-sm"
-                : "text-slate-600 hover:bg-slate-100 hover:text-slate-950"
+                ? "bg-slate-950 dark:bg-brand-700 text-white shadow-sm"
+                : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-950 dark:hover:text-slate-100"
             )}
           >
-            <Icon size={18} className={active ? "text-brand-200" : "text-slate-400"} />
-            {label}
+            <Icon
+              size={18}
+              className={cn(
+                "flex-shrink-0",
+                active ? "text-brand-200" : "text-slate-400 dark:text-slate-500"
+              )}
+            />
+            {!collapsed && <span className="truncate">{label}</span>}
           </Link>
         );
       })}
 
       <form action="/auth/signout" method="post" className="mt-auto pt-2">
-        <button type="submit" className="flex min-h-10 w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-slate-500 hover:bg-slate-100 hover:text-slate-900">
-          <LogOut size={18} />
-          Sign out
+        <button
+          type="submit"
+          title={collapsed ? "Sign out" : undefined}
+          className={cn(
+            "flex min-h-10 w-full items-center rounded-lg transition-colors text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100",
+            collapsed ? "justify-center px-2 py-2" : "gap-3 px-3 py-2 text-sm font-medium"
+          )}
+        >
+          <LogOut size={18} className="flex-shrink-0" />
+          {!collapsed && "Sign out"}
         </button>
       </form>
     </nav>
