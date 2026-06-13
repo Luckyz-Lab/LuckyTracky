@@ -99,7 +99,7 @@ export async function POST(request: Request) {
           .single();
         if (pending) {
           await replyMessage(event.replyToken, [
-            flexConfirm(`Receipt: ${draft.item ?? "?"} ${formatMoney(draft.amount ?? 0)} — save?`, pending.id),
+            flexConfirm(`Receipt: ${draft.item ?? "?"} ${draft.amount != null ? formatMoney(draft.amount) : "?"} — save?`, pending.id),
           ]);
         }
       } else if (event.type === "postback") {

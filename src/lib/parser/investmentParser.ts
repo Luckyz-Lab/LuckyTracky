@@ -16,6 +16,13 @@ import { getToday } from "./dateParser";
 const AMOUNT_RE = /[\d,]+(?:\.\d{1,2})?/;
 const TICKER_RE = /[A-Z]{1,6}/;
 
+/** English service/brand words that look like tickers but are everyday expenses. */
+const BLOCKLIST = new Set([
+  "GRAB", "BOLT", "TAXI", "BTS", "MRT", "ARL", "BRT", "GO",
+  "TRUE", "AIS", "DTAC", "NT", "WIFI",
+  "KFC", "MK", "ATM", "VAT", "QR", "OK",
+]);
+
 /** Full-message pattern: one or more "TICKER AMOUNT" pairs separated by whitespace. */
 const INVESTMENT_MSG_RE = /^(?:[A-Z]{1,6}\s+[\d,]+(?:\.\d{1,2})?\s*)+$/;
 
@@ -58,7 +65,9 @@ export function parseInvestmentMessage(message: string): ParsedTransaction[] | n
   let match: RegExpExecArray | null;
   PAIR_RE.lastIndex = 0;
   while ((match = PAIR_RE.exec(trimmed)) !== null) {
-    transactions.push(makeTx(match[1], parseAmount(match[2])));
+    const ticker = match[1];
+    if (BLOCKLIST.has(ticker)) return null;
+    transactions.push(makeTx(ticker, parseAmount(match[2])));
   }
 
   return transactions.length > 0 ? transactions : null;

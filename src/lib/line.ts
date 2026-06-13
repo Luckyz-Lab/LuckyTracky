@@ -33,6 +33,7 @@ export async function getMessageContent(messageId: string): Promise<{ base64: st
   const res = await fetch(CONTENT_URL(messageId), {
     headers: { Authorization: `Bearer ${token}` },
   });
+  if (!res.ok) throw new Error(`LINE content fetch failed: ${res.status}`);
   const mime = res.headers.get("content-type") || "image/jpeg";
   const buffer = Buffer.from(await res.arrayBuffer());
   return { base64: buffer.toString("base64"), mime };
@@ -238,7 +239,14 @@ export function flexSummary(summaryText: string): unknown {
       contents.push(sep(), { type: "text", text: "Top Expenses", size: "xs", color: "#9ca3af", margin: "sm" });
     } else if (line.startsWith("·")) {
       contents.push({ type: "text", text: line.replace("·", "").trim(), size: "xs", color: "#6b7280", wrap: true });
+    } else {
+      contents.push({ type: "text", text: line, size: "sm", color: "#374151", wrap: true });
     }
+  }
+
+  // A Flex box must contain at least one component; guard against empty bodies.
+  if (contents.length === 0) {
+    contents.push({ type: "text", text: summaryText || "—", size: "sm", color: "#374151", wrap: true });
   }
 
   return {
