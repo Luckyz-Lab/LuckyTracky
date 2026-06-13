@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Wallet, PanelLeftClose, PanelLeftOpen, Sun, Moon } from "lucide-react";
+import { Wallet, PanelLeftClose, PanelLeftOpen, Sun, Moon, MessageSquarePlus, X } from "lucide-react";
 import Sidebar from "./Sidebar";
 import HouseholdSwitcher from "./HouseholdSwitcher";
 import type { Household } from "@/lib/supabase/types";
@@ -17,6 +17,7 @@ export default function AppShell({ households, activeHousehold, children, chatPa
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [dark, setDark] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -111,10 +112,35 @@ export default function AppShell({ households, activeHousehold, children, chatPa
         <div className="mx-auto max-w-6xl px-4 py-5 md:px-8 md:py-8">{children}</div>
       </main>
 
-      {/* ── Chat panel ──────────────────────────────────────── */}
-      <aside className="hidden w-80 border-l border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 xl:block">
+      {/* ── Chat panel (desktop) ─────────────────────────── */}
+      <aside className="hidden w-80 border-l border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 xl:flex xl:flex-col">
         {chatPanel}
       </aside>
+
+      {/* ── Chat FAB (mobile/tablet) ─────────────────────────── */}
+      <button
+        onClick={() => setChatOpen(true)}
+        className="xl:hidden fixed bottom-5 right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-slate-950 dark:bg-brand-700 text-white shadow-lg hover:opacity-90 transition-opacity"
+        aria-label="Open chat"
+      >
+        <MessageSquarePlus size={22} />
+      </button>
+
+      {/* ── Chat drawer (mobile/tablet) ──────────────────────── */}
+      {chatOpen && (
+        <div className="xl:hidden fixed inset-0 z-50 flex flex-col justify-end">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setChatOpen(false)} />
+          <div className="relative flex flex-col bg-white dark:bg-slate-900 rounded-t-2xl shadow-2xl" style={{ height: "75dvh" }}>
+            <div className="flex items-center justify-between px-4 py-3 border-b border-slate-200 dark:border-slate-800">
+              <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">Quick add</span>
+              <button onClick={() => setChatOpen(false)} className="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200">
+                <X size={18} />
+              </button>
+            </div>
+            <div className="flex-1 overflow-hidden">{chatPanel}</div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
