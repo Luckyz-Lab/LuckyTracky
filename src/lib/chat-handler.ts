@@ -92,6 +92,24 @@ export async function handleChatMessage({
   message,
   source,
 }: HandleChatArgs): Promise<ChatResponse> {
+  const trimmed = message.trim();
+
+  if (trimmed === "บันทึกรายจ่าย") {
+    return { kind: "summary", message: "💸 พิมพ์รายการที่ต้องการบันทึก เช่น:\n• กาแฟ 65\n• ข้าวกลางวัน 120\n• ค่าน้ำมัน 500" };
+  }
+
+  if (trimmed === "บันทึกรายรับ") {
+    return { kind: "summary", message: "💰 พิมพ์รายรับที่ต้องการบันทึก เช่น:\n• เงินเดือน 30000\n• freelance 5000\n• ขายของ 1200" };
+  }
+
+  if (trimmed === "สแกนสลิป") {
+    return { kind: "summary", message: "📸 ส่งรูปสลิป หรือใบเสร็จมาได้เลย ระบบจะอ่านและบันทึกให้อัตโนมัติ" };
+  }
+
+  if (trimmed === "งบประมาณ") {
+    return { kind: "summary", message: await buildMonthSummary(supabase, householdId) };
+  }
+
   if (isSummaryRequest(message)) {
     return { kind: "summary", message: await buildMonthSummary(supabase, householdId) };
   }

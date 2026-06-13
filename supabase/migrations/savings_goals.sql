@@ -13,3 +13,37 @@ CREATE TABLE IF NOT EXISTS savings_goals (
 );
 
 CREATE INDEX IF NOT EXISTS idx_savings_goals_household ON savings_goals(household_id);
+
+ALTER TABLE savings_goals ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "household members can select"
+  ON savings_goals FOR SELECT
+  USING (
+    household_id IN (
+      SELECT household_id FROM household_members WHERE profile_id = auth.uid()
+    )
+  );
+
+CREATE POLICY "household members can insert"
+  ON savings_goals FOR INSERT
+  WITH CHECK (
+    household_id IN (
+      SELECT household_id FROM household_members WHERE profile_id = auth.uid()
+    )
+  );
+
+CREATE POLICY "household members can update"
+  ON savings_goals FOR UPDATE
+  USING (
+    household_id IN (
+      SELECT household_id FROM household_members WHERE profile_id = auth.uid()
+    )
+  );
+
+CREATE POLICY "household members can delete"
+  ON savings_goals FOR DELETE
+  USING (
+    household_id IN (
+      SELECT household_id FROM household_members WHERE profile_id = auth.uid()
+    )
+  );
