@@ -99,11 +99,24 @@ export async function GET(request: Request) {
     userId = created.user.id;
   }
 
+  // Resolve the user's primary household to use as LINE default.
+  const { data: membership } = await admin
+    .from("household_members")
+    .select("household_id")
+    .eq("profile_id", userId)
+    .order("created_at", { ascending: true })
+    .limit(1)
+    .maybeSingle();
+
   // Link the LINE user id to the profile for bot routing.
   await admin
     .from("line_accounts")
     .upsert(
-      { profile_id: userId, line_user_id: lineUserId },
+      {
+        profile_id: userId,
+        line_user_id: lineUserId,
+        ...(membership?.household_id ? { default_household_id: membership.household_id } : {}),
+      },
       { onConflict: "line_user_id" }
     );
 

@@ -47,14 +47,32 @@ async function buildMonthSummary(
   householdId: string
 ): Promise<string> {
   const month = currentMonth();
-  const { data } = await supabase
+
+  const { data: thisMonth } = await supabase
     .from("transactions")
     .select("amount, type, category_name")
     .eq("household_id", householdId)
     .gte("date", `${month}-01`)
     .lte("date", `${month}-31`);
 
-  const rows = data ?? [];
+  // Fallback: last 30 days if no data this month
+  let rows = thisMonth ?? [];
+  let label = "This month";
+  if (rows.length === 0) {
+    const since = new Date(Date.now() - 30 * 86400000).toISOString().slice(0, 10);
+    const { data: recent } = await supabase
+      .from("transactions")
+      .select("amount, type, category_name")
+      .eq("household_id", householdId)
+      .gte("date", since);
+    rows = recent ?? [];
+    label = "Last 30 days";
+  }
+
+  if (rows.length === 0) {
+    return "No transactions found yet.\nStart by sending a message like:\n· กาแฟ 65\n· เงินเดือน 30000";
+  }
+
   let income = 0;
   let expense = 0;
   const byCat: Record<string, number> = {};
@@ -67,7 +85,7 @@ async function buildMonthSummary(
   }
   const top = Object.entries(byCat).sort((a, b) => b[1] - a[1]).slice(0, 3);
 
-  let msg = `This month\nIncome: ${formatMoney(income)}\nExpense: ${formatMoney(expense)}\nBalance: ${formatMoney(income - expense)}`;
+  let msg = `${label}\nIncome: ${formatMoney(income)}\nExpense: ${formatMoney(expense)}\nBalance: ${formatMoney(income - expense)}`;
   if (top.length) {
     msg += `\n\nTop expenses:\n` + top.map(([c, v]) => `· ${c}: ${formatMoney(v)}`).join("\n");
   }
