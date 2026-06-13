@@ -8,7 +8,12 @@ import {
   replyMessage,
   getMessageContent,
   textMessage,
-  confirmTemplate,
+  flexSaved,
+  flexSavedMany,
+  flexConfirm,
+  flexSummary,
+  flexMissing,
+  flexError,
 } from "@/lib/line";
 import type { ChatResponse } from "@/lib/chat-types";
 
@@ -17,31 +22,21 @@ const LINK_HINT =
 
 function responseToMessages(r: ChatResponse): unknown[] {
   switch (r.kind) {
-    case "saved": {
-      const t = r.transaction;
-      const sign = t.type === "รายรับ" ? "+" : "-";
-      return [textMessage(`Saved: ${t.item} ${sign}${formatMoney(t.amount ?? 0)} (${t.category})`)];
-    }
+    case "saved":
+      return [flexSaved(r.transaction)];
     case "saved_many":
-      return [
-        textMessage(
-          [
-            r.message,
-            ...r.transactions.map((t) => {
-              const sign = t.type === "รายรับ" ? "+" : "-";
-              return `- ${t.item} ${sign}${formatMoney(t.amount ?? 0)} (${t.category})`;
-            }),
-          ].join("\n")
-        ),
-      ];
+      return [flexSavedMany(r.transactions)];
     case "confirm":
-      return [confirmTemplate(`${r.transaction.item} ${formatMoney(r.transaction.amount ?? 0)} — save this?`, r.pendingId)];
+      return [flexConfirm(
+        `${r.transaction.item} ${formatMoney(r.transaction.amount ?? 0)} — save this?`,
+        r.pendingId
+      )];
     case "missing":
-      return [textMessage(r.message)];
+      return [flexMissing(r.message)];
     case "summary":
-      return [textMessage(r.message)];
+      return [flexSummary(r.message)];
     case "error":
-      return [textMessage(`Error: ${r.message}`)];
+      return [flexError(r.message)];
   }
 }
 
@@ -104,7 +99,7 @@ export async function POST(request: Request) {
           .single();
         if (pending) {
           await replyMessage(event.replyToken, [
-            confirmTemplate(`Receipt: ${draft.item ?? "?"} ${formatMoney(draft.amount ?? 0)} — save?`, pending.id),
+            flexConfirm(`Receipt: ${draft.item ?? "?"} ${formatMoney(draft.amount ?? 0)} — save?`, pending.id),
           ]);
         }
       } else if (event.type === "postback") {
@@ -120,7 +115,7 @@ export async function POST(request: Request) {
         }
       }
     } catch (err) {
-      await replyMessage(event.replyToken, [textMessage(`Error: ${(err as Error).message}`)]);
+      await replyMessage(event.replyToken, [flexError((err as Error).message)]);
     }
   }
 
