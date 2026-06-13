@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { handleChatMessage, handleConfirm } from "@/lib/chat-handler";
-import { parseReceiptImage } from "@/lib/parser/gemini";
+import { parseReceiptImage, parseVoiceNote } from "@/lib/parser/gemini";
 import { formatMoney } from "@/lib/utils";
 import {
   verifyLineSignature,
@@ -100,6 +100,29 @@ export async function POST(request: Request) {
         if (pending) {
           await replyMessage(event.replyToken, [
             flexConfirm(`Receipt: ${draft.item ?? "?"} ${draft.amount != null ? formatMoney(draft.amount) : "?"} — save?`, pending.id),
+          ]);
+        }
+      } else if (event.type === "message" && event.message?.type === "audio") {
+        const { base64, mime } = await getMessageContent(event.message.id);
+        const audioMime = mime.includes("audio") ? mime : "audio/m4a";
+        const { transcript, parsed } = await parseVoiceNote(base64, audioMime);
+        const { data: pending } = await admin
+          .from("pending_confirmations")
+          .insert({
+            household_id: acct.default_household_id,
+            profile_id: acct.profile_id,
+            parsed_payload: parsed as unknown as Record<string, unknown>,
+            raw_input: transcript || "voice note",
+            source: "line",
+          })
+          .select("id")
+          .single();
+        if (pending) {
+          await replyMessage(event.replyToken, [
+            flexConfirm(
+              `🎤 "${transcript || "voice note"}" → ${parsed.item ?? "?"} ${parsed.amount != null ? formatMoney(parsed.amount) : "?"} — save?`,
+              pending.id
+            ),
           ]);
         }
       } else if (event.type === "postback") {

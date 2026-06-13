@@ -2,6 +2,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { parseExpenseMessage } from "@/lib/parser/gemini";
 import { parseMultipleTransactions } from "@/lib/parser/multiTransactionParser";
 import { parseInvestmentMessage } from "@/lib/parser/investmentParser";
+import { compareMonths, formatComparison, detectRecurring, formatRecurring } from "@/lib/insights";
 import { shouldAutoSaveTransaction } from "@/lib/parser/transactionRules";
 import { saveTransaction } from "@/lib/transactions";
 import { formatMoney, currentMonth } from "@/lib/utils";
@@ -10,6 +11,8 @@ import type { ParsedTransaction } from "@/lib/parser/types";
 import type { TxSource } from "@/lib/supabase/types";
 
 const SUMMARY_KEYWORDS = ["สรุป", "ยอด", "รายงาน", "summary", "report", "this month", "เดือนนี้"];
+const COMPARE_KEYWORDS = ["เทียบ", "compare", "เดือนก่อน", "vs", "insight"];
+const RECURRING_KEYWORDS = ["รายการซ้ำ", "recurring", "ประจำ", " recurring"];
 
 function toPayload(p: ParsedTransaction): ChatTransactionPayload {
   return {
@@ -27,6 +30,16 @@ function isSummaryRequest(text: string): boolean {
   const t = text.toLowerCase().trim();
   if (/\d/.test(t)) return false; // has a number -> likely a transaction
   return SUMMARY_KEYWORDS.some((k) => t.includes(k));
+}
+
+function isCompareRequest(text: string): boolean {
+  const t = text.toLowerCase().trim();
+  return COMPARE_KEYWORDS.some((k) => t.includes(k));
+}
+
+function isRecurringRequest(text: string): boolean {
+  const t = text.toLowerCase().trim();
+  return RECURRING_KEYWORDS.some((k) => t.includes(k));
 }
 
 async function buildMonthSummary(
@@ -81,6 +94,16 @@ export async function handleChatMessage({
 }: HandleChatArgs): Promise<ChatResponse> {
   if (isSummaryRequest(message)) {
     return { kind: "summary", message: await buildMonthSummary(supabase, householdId) };
+  }
+
+  if (isCompareRequest(message)) {
+    const c = await compareMonths(supabase, householdId);
+    return { kind: "summary", message: formatComparison(c) };
+  }
+
+  if (isRecurringRequest(message)) {
+    const list = await detectRecurring(supabase, householdId);
+    return { kind: "summary", message: formatRecurring(list) };
   }
 
   // Fast-path: pure stock-ticker messages (e.g. "SPCX 2000 RKLB 5000")

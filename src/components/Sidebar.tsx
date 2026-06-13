@@ -12,6 +12,7 @@ import {
   Settings,
   LogOut,
   TrendingUp,
+  PiggyBank,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -22,6 +23,7 @@ const NAV = [
   { href: "/reports", label: "Reports", icon: TrendingUp },
   { href: "/categories", label: "Categories", icon: Tags },
   { href: "/receipts", label: "Receipts", icon: ScanLine },
+  { href: "/savings", label: "Savings", icon: PiggyBank },
   { href: "/settings", label: "Settings", icon: Settings },
 ];
 

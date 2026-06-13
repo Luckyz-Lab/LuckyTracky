@@ -109,7 +109,7 @@ export default function TransactionsView({ householdId, currency, categories }: 
         </div>
         <div className="flex gap-2">
           <a
-            href={`/api/export?household_id=${householdId}&format=csv`}
+            href="/api/export/transactions"
             className="btn-outline text-sm"
           >
             <Download size={16} /> Export

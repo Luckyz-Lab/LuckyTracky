@@ -44,6 +44,37 @@ export async function parseExpenseMessage(userMessage: string): Promise<ParsedTr
   }
 }
 
+/**
+ * Transcribe a voice note (m4a/aac/mp4 audio from LINE) then parse as a transaction.
+ * Gemini multimodal supports audio inline data.
+ */
+export async function parseVoiceNote(
+  base64Audio: string,
+  mimeType: string
+): Promise<{ transcript: string; parsed: ParsedTransaction }> {
+  const today = getToday();
+  const result = await getModel().generateContent({
+    contents: [
+      {
+        role: "user",
+        parts: [
+          {
+            text: `Today is ${today}. The audio below is a voice message about a financial transaction in Thai. 
+1. Transcribe it exactly.
+2. Parse it as a transaction JSON: { item, amount, type ("รายรับ"|"รายจ่าย"), category, date, confidence, missing_fields }.
+Return ONLY valid JSON: { "transcript": "...", "item": ..., "amount": ..., "type": ..., "category": ..., "date": ..., "confidence": ..., "missing_fields": [] }`,
+          },
+          { inlineData: { data: base64Audio, mimeType } },
+        ],
+      },
+    ],
+  });
+  const raw = JSON.parse(result.response.text());
+  const transcript: string = raw.transcript ?? "";
+  const parsed = sanitizeResult(raw, transcript || raw.item || "");
+  return { transcript, parsed };
+}
+
 export async function parseReceiptImage(
   base64Image: string,
   mimeType: string

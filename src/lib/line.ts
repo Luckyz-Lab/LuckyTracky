@@ -2,6 +2,7 @@ import { createHmac, timingSafeEqual } from "crypto";
 import type { ChatTransactionPayload } from "./chat-types";
 
 const REPLY_URL = "https://api.line.me/v2/bot/message/reply";
+const PUSH_URL = "https://api.line.me/v2/bot/message/push";
 const CONTENT_URL = (id: string) => `https://api-data.line.me/v2/bot/message/${id}/content`;
 
 export function verifyLineSignature(body: string, signature: string | null): boolean {
@@ -25,6 +26,19 @@ export async function replyMessage(replyToken: string, messages: unknown[]): Pro
       Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify({ replyToken, messages }),
+  });
+}
+
+export async function pushMessage(userId: string, messages: unknown[]): Promise<void> {
+  const token = process.env.LINE_CHANNEL_ACCESS_TOKEN;
+  if (!token) return;
+  await fetch(PUSH_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ to: userId, messages }),
   });
 }
 
@@ -125,6 +139,23 @@ function bubble(header: FC, bodyBox: FC, footer?: FC): FC {
   };
 }
 
+/** Quick Reply helper — max 13 items per LINE spec. */
+function qr(items: Array<{ label: string; text: string }>): FC {
+  return {
+    quickReply: {
+      items: items.map((i) => ({
+        type: "action" as const,
+        action: { type: "message", label: i.label, text: i.text },
+      })),
+    },
+  };
+}
+
+const QR_ADD = [{ label: "➕ Add more", text: "บันทึกรายการ" }];
+const QR_SUMMARY = [{ label: "📊 Summary", text: "สรุป" }];
+const QR_BUDGET = [{ label: "💰 Budget", text: "งบประมาณ" }];
+const QR_SCAN = [{ label: "📸 Scan receipt", text: "สแกนสลิป" }];
+
 /** Saved single transaction card. */
 export function flexSaved(t: ChatTransactionPayload): unknown {
   const color = txColor(t);
@@ -143,6 +174,7 @@ export function flexSaved(t: ChatTransactionPayload): unknown {
         kv("Date", t.date ?? "—"),
       ])
     ),
+    ...qr([...QR_ADD, ...QR_SUMMARY, ...QR_BUDGET]),
   };
 }
 
@@ -180,6 +212,7 @@ export function flexSavedMany(transactions: ChatTransactionPayload[]): unknown {
         kv("Net", fmt(Math.abs(net)), net >= 0 ? "#0b7451" : "#dc2626"),
       ])
     ),
+    ...qr([...QR_ADD, ...QR_SUMMARY]),
   };
 }
 
@@ -218,41 +251,68 @@ export function flexConfirm(text: string, pendingId: string): unknown {
   };
 }
 
-/** Monthly summary card — parses the plain-text summary into structured rows. */
+/** Monthly summary carousel — parses plain-text summary into multiple bubbles. */
 export function flexSummary(summaryText: string): unknown {
   const lines = summaryText.split("\n");
-  const contents: FC[] = [];
+  const bubbles: FC[] = [];
+
+  // Bubble 1: Overview (Income / Expense / Balance)
+  const overviewContents: FC[] = [];
+  let incomeVal = "";
+  let expenseVal = "";
+  let balanceVal = "";
 
   for (const raw of lines) {
     const line = raw.trim();
-    if (!line) continue;
-    if (line === "This month") {
-      contents.push({ type: "text", text: line, size: "xs", color: "#9ca3af" });
-    } else if (line.startsWith("Income:")) {
-      contents.push(kv("Income", line.replace("Income: ", ""), "#0b7451"));
+    if (!line || line === "This month") continue;
+    if (line.startsWith("Income:")) {
+      incomeVal = line.replace("Income: ", "");
+      overviewContents.push(kv("Income", incomeVal, "#0b7451"));
     } else if (line.startsWith("Expense:")) {
-      contents.push(kv("Expense", line.replace("Expense: ", ""), "#dc2626"));
+      expenseVal = line.replace("Expense: ", "");
+      overviewContents.push(kv("Expense", expenseVal, "#dc2626"));
     } else if (line.startsWith("Balance:")) {
-      const val = line.replace("Balance: ", "");
-      contents.push(sep(), kv("Balance", val, val.startsWith("-") ? "#dc2626" : "#0b7451"));
-    } else if (line === "Top expenses:") {
-      contents.push(sep(), { type: "text", text: "Top Expenses", size: "xs", color: "#9ca3af", margin: "sm" });
-    } else if (line.startsWith("·")) {
-      contents.push({ type: "text", text: line.replace("·", "").trim(), size: "xs", color: "#6b7280", wrap: true });
-    } else {
-      contents.push({ type: "text", text: line, size: "sm", color: "#374151", wrap: true });
+      balanceVal = line.replace("Balance: ", "");
+      overviewContents.push(sep(), kv("Balance", balanceVal, balanceVal.startsWith("-") ? "#dc2626" : "#0b7451"));
     }
   }
 
-  // A Flex box must contain at least one component; guard against empty bodies.
-  if (contents.length === 0) {
-    contents.push({ type: "text", text: summaryText || "—", size: "sm", color: "#374151", wrap: true });
+  if (overviewContents.length === 0) {
+    overviewContents.push({ type: "text", text: summaryText || "—", size: "sm", color: "#374151", wrap: true });
   }
+
+  bubbles.push(bubble(hdr("Overview", "#0b7451"), body(overviewContents)));
+
+  // Bubble 2: Top expenses
+  const topContents: FC[] = [];
+  let inTop = false;
+  for (const raw of lines) {
+    const line = raw.trim();
+    if (line === "Top expenses:") { inTop = true; continue; }
+    if (inTop && line.startsWith("·")) {
+      topContents.push({ type: "text", text: line.replace("·", "").trim(), size: "sm", color: "#374151", wrap: true });
+    }
+  }
+
+  if (topContents.length > 0) {
+    bubbles.push(bubble(hdr("Top Expenses", "#dc2626"), body(topContents)));
+  }
+
+  // Bubble 3: Quick tip
+  bubbles.push(
+    bubble(
+      hdr("Tip", "#2563eb"),
+      body([
+        { type: "text", text: "Send a photo of your receipt to scan it automatically!", size: "sm", color: "#374151", wrap: true },
+      ])
+    )
+  );
 
   return {
     type: "flex",
     altText: summaryText,
-    contents: bubble(hdr("Monthly Summary", "#0b7451"), body(contents)),
+    contents: { type: "carousel", contents: bubbles },
+    ...qr([...QR_ADD, ...QR_SCAN, ...QR_BUDGET]),
   };
 }
 
@@ -265,6 +325,7 @@ export function flexMissing(message: string): unknown {
       hdr("?  More Info Needed", "#64748b"),
       body([{ type: "text", text: message, size: "sm", color: "#374151", wrap: true }])
     ),
+    ...qr(QR_SUMMARY),
   };
 }
 
@@ -277,5 +338,6 @@ export function flexError(message: string): unknown {
       hdr("✗  Error", "#dc2626"),
       body([{ type: "text", text: message, size: "sm", color: "#374151", wrap: true }])
     ),
+    ...qr(QR_SUMMARY),
   };
 }
