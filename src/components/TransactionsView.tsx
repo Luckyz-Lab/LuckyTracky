@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { Plus, Search, Trash2, Pencil, X, Loader2, ArrowDownCircle, ArrowUpCircle, Download } from "lucide-react";
+import { Plus, Search, Trash2, Pencil, X, Loader2, Download } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import type { Transaction, Category } from "@/lib/supabase/types";
-import { getCategoryTone } from "@/lib/category-colors";
+import { getCategoryTone, getCategoryEmoji } from "@/lib/category-colors";
 import { formatMoney } from "@/lib/utils";
+import { useSound } from "./mascot/SoundProvider";
 
 interface Props {
   householdId: string;
@@ -100,22 +102,22 @@ export default function TransactionsView({ householdId, currency, categories }: 
 
   const filteredCats = categories.filter((c) => c.type === form.type);
 
+  const { play } = useSound();
+
   return (
-    <div className="space-y-4">
-      <header className="flex items-center justify-between">
+    <div className="space-y-5">
+      {/* Header */}
+      <header className="flex flex-col gap-3 border-b border-lucky-100/60 dark:border-slate-800 pb-5 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="page-title">Transactions</h1>
-          <p className="page-subtitle">{rows.length} records</p>
+          <h1 className="page-title">รายการ 🧾</h1>
+          <p className="page-subtitle">{rows.length} รายการทั้งหมด</p>
         </div>
         <div className="flex gap-2">
-          <a
-            href="/api/export/transactions"
-            className="btn-outline text-sm"
-          >
-            <Download size={16} /> Export
+          <a href="/api/export/transactions" className="btn-outline text-sm">
+            <Download size={15} /> ส่งออก
           </a>
           <button onClick={openCreate} className="btn-primary text-sm">
-            <Plus size={16} /> Add
+            <Plus size={15} /> เพิ่มรายการ
           </button>
         </div>
       </header>
@@ -123,159 +125,181 @@ export default function TransactionsView({ householdId, currency, categories }: 
       {/* Filters */}
       <div className="card flex flex-wrap items-end gap-3 p-4">
         <div className="relative min-w-[180px] flex-1">
-          <Search size={16} className="absolute left-3 top-2.5 text-zinc-400" />
-          <input
-            className="input pl-9"
-            placeholder="Search item or category"
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-          />
+          <Search size={15} className="absolute left-3.5 top-3 text-slate-400" />
+          <input className="input pl-10" placeholder="ค้นหารายการหรือหมวดหมู่" value={q} onChange={(e) => setQ(e.target.value)} />
         </div>
         <select className="input w-auto" value={type} onChange={(e) => setType(e.target.value)}>
-          <option value="">All types</option>
-          <option value="income">Income</option>
-          <option value="expense">Expense</option>
+          <option value="">ทุกประเภท</option>
+          <option value="income">เงินเข้า 💚</option>
+          <option value="expense">เงินออก 🔴</option>
         </select>
         <select className="input w-auto" value={categoryId} onChange={(e) => setCategoryId(e.target.value)}>
-          <option value="">All categories</option>
-          {categories.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.name}
-            </option>
-          ))}
+          <option value="">ทุกหมวด</option>
+          {categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
         </select>
         <input type="date" className="input w-auto" value={from} onChange={(e) => setFrom(e.target.value)} />
         <input type="date" className="input w-auto" value={to} onChange={(e) => setTo(e.target.value)} />
       </div>
 
-      {/* Table */}
-      <div className="card overflow-hidden">
+      {/* List */}
+      <div className="card overflow-hidden p-2">
         {loading ? (
-          <div className="flex justify-center p-8 text-zinc-400">
-            <Loader2 className="animate-spin" />
+          <div className="flex flex-col items-center gap-3 p-10 text-slate-400">
+            <Loader2 className="animate-spin" size={28} />
+            <p className="text-sm">กำลังโหลด...</p>
           </div>
         ) : rows.length === 0 ? (
-          <p className="p-8 text-center text-sm text-zinc-400">No transactions found.</p>
+          <div className="flex flex-col items-center gap-2 py-12">
+            <span className="text-4xl">😴</span>
+            <p className="text-sm text-slate-400 dark:text-slate-500">ไม่มีรายการที่ตรงกัน</p>
+          </div>
         ) : (
-          <table className="w-full text-sm">
-            <thead className="bg-zinc-50 text-left text-xs text-zinc-500">
-              <tr>
-                <th className="px-4 py-3">Item</th>
-                <th className="px-4 py-3">Category</th>
-                <th className="px-4 py-3">Date</th>
-                <th className="px-4 py-3 text-right">Amount</th>
-                <th className="px-4 py-3"></th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-zinc-100">
+          <ul className="divide-y divide-slate-100/80 dark:divide-slate-700/40">
+            <AnimatePresence initial={false}>
               {rows.map((t) => {
                 const tone = getCategoryTone(t.category_name);
+                const emoji = getCategoryEmoji(t.category_name);
                 return (
-                <tr key={t.id} className="hover:bg-zinc-50">
-                  <td className="px-4 py-3">
-                    <span className="flex items-center gap-2">
-                      {t.type === "income" ? (
-                        <ArrowDownCircle size={16} className="text-brand-600" />
-                      ) : (
-                        <ArrowUpCircle size={16} className="text-rose-500" />
-                      )}
-                      {t.item}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-zinc-500">
-                    <span
-                      className="inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-xs font-semibold"
-                      style={{ backgroundColor: tone.bg, borderColor: tone.border, color: tone.text }}
-                    >
-                      <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: tone.dot }} />
-                      {t.category_name}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-zinc-500">{t.date}</td>
-                  <td className={`px-4 py-3 text-right font-medium ${t.type === "income" ? "text-brand-600" : "text-rose-500"}`}>
-                    {t.type === "income" ? "+" : "-"}
-                    {formatMoney(Number(t.amount), currency)}
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex justify-end gap-1">
-                      <button onClick={() => openEdit(t)} className="rounded-lg p-1.5 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700">
-                        <Pencil size={15} />
-                      </button>
-                      <button onClick={() => remove(t.id)} className="rounded-lg p-1.5 text-zinc-400 hover:bg-rose-50 hover:text-rose-500">
-                        <Trash2 size={15} />
-                      </button>
+                  <motion.li
+                    key={t.id}
+                    initial={{ opacity: 0, x: -16 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 16, height: 0 }}
+                    transition={{ duration: 0.22 }}
+                    className="flex items-center justify-between gap-3 px-3 py-3 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group"
+                  >
+                    <div className="flex min-w-0 items-center gap-3">
+                      <span
+                        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl text-xl"
+                        style={{ backgroundColor: tone.bg }}
+                      >
+                        {emoji}
+                      </span>
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-semibold text-slate-900 dark:text-slate-100">{t.item}</p>
+                        <div className="mt-0.5 flex flex-wrap items-center gap-2">
+                          <span
+                            className="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium"
+                            style={{ backgroundColor: tone.bg, borderColor: tone.border, color: tone.text }}
+                          >
+                            {t.category_name ?? "อื่นๆ"}
+                          </span>
+                          <span className="text-xs text-slate-400 dark:text-slate-500 tabular-nums">{t.date}</span>
+                        </div>
+                      </div>
                     </div>
-                  </td>
-                </tr>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <span className={`metric-number text-sm ${t.type === "income" ? "text-lucky-600 dark:text-lucky-400" : "text-rose-500 dark:text-rose-400"}`}>
+                        {t.type === "income" ? "+" : "-"}{formatMoney(Number(t.amount), currency)}
+                      </span>
+                      <div className="flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button onClick={() => openEdit(t)} className="rounded-xl p-1.5 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-700 dark:hover:text-slate-200 transition-colors">
+                          <Pencil size={14} />
+                        </button>
+                        <button onClick={() => remove(t.id)} className="rounded-xl p-1.5 text-slate-400 hover:bg-rose-50 dark:hover:bg-rose-900/30 hover:text-rose-500 transition-colors">
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                    </div>
+                  </motion.li>
                 );
               })}
-            </tbody>
-          </table>
+            </AnimatePresence>
+          </ul>
         )}
       </div>
 
-      {/* Modal */}
-      {modalOpen && (
-        <div className="fixed inset-0 z-30 flex items-center justify-center bg-black/30 p-4" onClick={() => setModalOpen(false)}>
-          <div className="card w-full max-w-md p-6" onClick={(e) => e.stopPropagation()}>
-            <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-lg font-semibold">{editing ? "Edit" : "Add"} transaction</h2>
-              <button onClick={() => setModalOpen(false)} className="text-zinc-400 hover:text-zinc-700">
-                <X size={18} />
-              </button>
-            </div>
-            <div className="space-y-3">
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  className={`btn ${form.type === "expense" ? "bg-rose-500 text-white" : "btn-outline"}`}
-                  onClick={() => setForm((f) => ({ ...f, type: "expense" }))}
-                >
-                  Expense
-                </button>
-                <button
-                  className={`btn ${form.type === "income" ? "bg-brand-600 text-white" : "btn-outline"}`}
-                  onClick={() => setForm((f) => ({ ...f, type: "income" }))}
-                >
-                  Income
-                </button>
+      {/* Spring bottom-sheet modal */}
+      <AnimatePresence>
+        {modalOpen && (
+          <motion.div
+            className="fixed inset-0 z-40 flex flex-col justify-end sm:items-center sm:justify-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setModalOpen(false)} />
+            <motion.div
+              className="relative w-full rounded-t-3xl sm:rounded-3xl sm:max-w-md bg-white dark:bg-slate-900 shadow-2xl"
+              initial={{ y: 80, opacity: 0, scale: 0.97 }}
+              animate={{ y: 0, opacity: 1, scale: 1 }}
+              exit={{ y: 80, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 340, damping: 30 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Handle */}
+              <div className="flex justify-center pt-3 pb-1 sm:hidden">
+                <div className="h-1 w-10 rounded-full bg-slate-200 dark:bg-slate-700" />
               </div>
-              <div>
-                <label className="label">Item</label>
-                <input className="input" value={form.item} onChange={(e) => setForm((f) => ({ ...f, item: e.target.value }))} />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="label">Amount</label>
-                  <input
-                    className="input"
-                    type="number"
-                    value={form.amount}
-                    onChange={(e) => setForm((f) => ({ ...f, amount: e.target.value }))}
-                  />
+              <div className="p-6 space-y-4">
+                <div className="flex items-center justify-between">
+                  <h2 className="font-display text-lg font-semibold text-slate-900 dark:text-slate-100">
+                    {editing ? "✏️ แก้ไขรายการ" : "✨ เพิ่มรายการใหม่"}
+                  </h2>
+                  <button onClick={() => setModalOpen(false)} className="rounded-full p-1.5 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                    <X size={18} />
+                  </button>
                 </div>
-                <div>
-                  <label className="label">Date</label>
-                  <input className="input" type="date" value={form.date} onChange={(e) => setForm((f) => ({ ...f, date: e.target.value }))} />
+
+                {/* Type toggle */}
+                <div className="grid grid-cols-2 gap-2 rounded-2xl bg-slate-100 dark:bg-slate-800 p-1">
+                  <button
+                    className={`btn text-sm py-2 transition-all ${
+                      form.type === "expense"
+                        ? "bg-rose-500 text-white shadow-puff-peach"
+                        : "text-slate-500 dark:text-slate-400 hover:text-slate-700"
+                    }`}
+                    onClick={() => setForm((f) => ({ ...f, type: "expense", category_name: "อื่นๆ" }))}
+                  >
+                    🔴 เงินออก
+                  </button>
+                  <button
+                    className={`btn text-sm py-2 transition-all ${
+                      form.type === "income"
+                        ? "bg-lucky-600 text-white shadow-puff"
+                        : "text-slate-500 dark:text-slate-400 hover:text-slate-700"
+                    }`}
+                    onClick={() => setForm((f) => ({ ...f, type: "income", category_name: "อื่นๆ" }))}
+                  >
+                    💚 เงินเข้า
+                  </button>
                 </div>
+
+                <div>
+                  <label className="label">รายการ</label>
+                  <input className="input" placeholder="เช่น ชาบูหมูกระทะ, ค่า BTS..." value={form.item} onChange={(e) => setForm((f) => ({ ...f, item: e.target.value }))} />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="label">จำนวนเงิน</label>
+                    <input className="input" type="number" placeholder="0" value={form.amount} onChange={(e) => setForm((f) => ({ ...f, amount: e.target.value }))} />
+                  </div>
+                  <div>
+                    <label className="label">วันที่</label>
+                    <input className="input" type="date" value={form.date} onChange={(e) => setForm((f) => ({ ...f, date: e.target.value }))} />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="label">หมวดหมู่</label>
+                  <select className="input" value={form.category_name} onChange={(e) => setForm((f) => ({ ...f, category_name: e.target.value }))}>
+                    {filteredCats.map((c) => <option key={c.id} value={c.name}>{getCategoryEmoji(c.name)} {c.name}</option>)}
+                  </select>
+                </div>
+
+                <button
+                  onClick={() => { play("coin"); save(); }}
+                  disabled={saving || !form.item || !form.amount}
+                  className="btn-primary w-full py-3"
+                >
+                  {saving ? <Loader2 size={16} className="animate-spin" /> : (editing ? "💾 บันทึก" : "✅ เพิ่มรายการ")}
+                </button>
               </div>
-              <div>
-                <label className="label">Category</label>
-                <select className="input" value={form.category_name} onChange={(e) => setForm((f) => ({ ...f, category_name: e.target.value }))}>
-                  {filteredCats.map((c) => (
-                    <option key={c.id} value={c.name}>
-                      {c.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <button onClick={save} disabled={saving || !form.item || !form.amount} className="btn-primary w-full">
-                {saving && <Loader2 size={16} className="animate-spin" />}
-                {editing ? "Save changes" : "Add transaction"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

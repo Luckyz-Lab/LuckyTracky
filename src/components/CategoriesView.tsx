@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, Loader2, Eye, EyeOff } from "lucide-react";
-import { getCategoryTone } from "@/lib/category-colors";
+import { getCategoryTone, getCategoryEmoji } from "@/lib/category-colors";
 import type { Category } from "@/lib/supabase/types";
 
 export default function CategoriesView({
@@ -52,36 +52,36 @@ export default function CategoriesView({
 
   return (
     <div className="space-y-6">
-      <header>
-        <h1 className="page-title">Categories</h1>
-        <p className="page-subtitle">Manage categories and parser keywords</p>
+      <header className="border-b border-lucky-100/60 dark:border-slate-800 pb-5">
+        <h1 className="page-title">หมวดหมู่ 🏷️</h1>
+        <p className="page-subtitle">จัดการหมวดหมู่และคำคีย์ที่ใช้จำแนกอัตโนมัติ</p>
       </header>
 
-      <section className="card flex flex-wrap items-end gap-3 p-4">
-        <div className="w-32">
-          <label className="label">Type</label>
+      <section className="card flex flex-wrap items-end gap-3 p-5">
+        <div className="w-36">
+          <label className="label">ประเภท</label>
           <select className="input" value={type} onChange={(e) => setType(e.target.value as "expense" | "income")}>
-            <option value="expense">Expense</option>
-            <option value="income">Income</option>
+            <option value="expense">🔴 รายจ่าย</option>
+            <option value="income">💚 รายรับ</option>
           </select>
         </div>
-        <div className="w-40">
-          <label className="label">Name</label>
-          <input className="input" value={name} onChange={(e) => setName(e.target.value)} />
+        <div className="w-44">
+          <label className="label">ชื่อหมวด</label>
+          <input className="input" value={name} onChange={(e) => setName(e.target.value)} placeholder="เช่น อาหาร, เดินทาง..." />
         </div>
         <div className="min-w-[180px] flex-1">
-          <label className="label">Keywords (comma separated)</label>
+          <label className="label">คีย์เวิร์ด (คั่นด้วยเครื่องหมายคอมมา)</label>
           <input className="input" value={keywords} onChange={(e) => setKeywords(e.target.value)} placeholder="กิน, ข้าว, อาหาร" />
         </div>
         <button onClick={add} disabled={saving || !name} className="btn-primary">
-          {saving ? <Loader2 size={16} className="animate-spin" /> : <Plus size={16} />}
-          Add
+          {saving ? <Loader2 size={15} className="animate-spin" /> : <Plus size={15} />}
+          เพิ่ม
         </button>
       </section>
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-        <CategoryList title="Expense" items={expense} onToggle={toggleActive} />
-        <CategoryList title="Income" items={income} onToggle={toggleActive} />
+        <CategoryList title="🔴 รายจ่าย" items={expense} onToggle={toggleActive} />
+        <CategoryList title="💚 รายรับ" items={income} onToggle={toggleActive} />
       </div>
     </div>
   );
@@ -98,22 +98,37 @@ function CategoryList({
 }) {
   return (
     <section className="card p-5">
-      <h2 className="mb-3 text-sm font-semibold text-zinc-700">{title}</h2>
-      <ul className="divide-y divide-zinc-100">
+      <h2 className="mb-4 font-display text-sm font-semibold text-slate-700 dark:text-slate-300">{title}</h2>
+      <ul className="space-y-2">
         {items.map((c) => (
-          <li key={c.id} className={`flex items-center justify-between py-2.5 ${c.is_active ? "" : "opacity-50"}`}>
-            <div className="min-w-0">
+          <li
+            key={c.id}
+            className={`flex items-center justify-between gap-3 rounded-2xl px-3 py-2.5 transition-all ${
+              c.is_active
+                ? "bg-slate-50 dark:bg-slate-800/50"
+                : "bg-slate-50/40 dark:bg-slate-800/20 opacity-50"
+            }`}
+          >
+            <div className="min-w-0 flex-1">
               <CategoryLabel name={c.name} />
               {c.keywords.length > 0 && (
-                <p className="mt-1 truncate text-xs text-zinc-400">{c.keywords.slice(0, 6).join(", ")}</p>
+                <p className="mt-1 truncate text-xs text-slate-400 dark:text-slate-500 pl-1">
+                  {c.keywords.slice(0, 6).join(", ")}
+                </p>
               )}
             </div>
-            <button onClick={() => onToggle(c)} className="text-zinc-400 hover:text-zinc-700" title={c.is_active ? "Hide" : "Show"}>
-              {c.is_active ? <Eye size={16} /> : <EyeOff size={16} />}
+            <button
+              onClick={() => onToggle(c)}
+              className="shrink-0 rounded-full p-1.5 text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-slate-700 dark:hover:text-slate-200 transition-colors"
+              title={c.is_active ? "ซ่อน" : "แสดง"}
+            >
+              {c.is_active ? <Eye size={15} /> : <EyeOff size={15} />}
             </button>
           </li>
         ))}
-        {items.length === 0 && <li className="py-3 text-sm text-zinc-400">None</li>}
+        {items.length === 0 && (
+          <li className="py-4 text-center text-sm text-slate-400 dark:text-slate-500">ยังไม่มีหมวดหมู่</li>
+        )}
       </ul>
     </section>
   );
@@ -121,12 +136,13 @@ function CategoryList({
 
 function CategoryLabel({ name }: { name: string }) {
   const tone = getCategoryTone(name);
+  const emoji = getCategoryEmoji(name);
   return (
     <span
-      className="inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-xs font-semibold"
+      className="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold"
       style={{ backgroundColor: tone.bg, borderColor: tone.border, color: tone.text }}
     >
-      <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: tone.dot }} />
+      <span className="text-sm">{emoji}</span>
       {name}
     </span>
   );

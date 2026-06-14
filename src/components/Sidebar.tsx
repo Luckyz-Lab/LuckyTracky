@@ -40,11 +40,11 @@ export default function Sidebar({ collapsed = false }: { collapsed?: boolean }) 
             href={href}
             title={collapsed ? label : undefined}
             className={cn(
-              "flex min-h-10 items-center rounded-lg transition-colors",
+              "flex min-h-10 items-center rounded-2xl transition-all duration-150",
               collapsed ? "justify-center px-2 py-2" : "gap-3 px-3 py-2 text-sm font-medium",
               active
-                ? "bg-slate-950 dark:bg-brand-700 text-white shadow-sm"
-                : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-950 dark:hover:text-slate-100"
+                ? "bg-lucky-600 text-white shadow-puff"
+                : "text-slate-600 dark:text-slate-400 hover:bg-lucky-50 hover:text-lucky-700 dark:hover:bg-slate-800 dark:hover:text-lucky-300"
             )}
           >
             <Icon

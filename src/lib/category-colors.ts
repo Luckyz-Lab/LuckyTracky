@@ -35,3 +35,28 @@ export function getCategoryTone(category: string | null | undefined): CategoryTo
 export function getCategoryFill(category: string | null | undefined) {
   return getCategoryTone(category).fill;
 }
+
+const CATEGORY_EMOJI: Record<string, string> = {
+  อาหาร: "🍜", food: "🍜", "ข้าว": "🍚", ชาบู: "🍲", หมูกระทะ: "🥩",
+  เครื่องดื่ม: "🧋", กาแฟ: "☕", ชา: "🧉",
+  เดินทาง: "🚌", "รถ": "🚗", แท็กซี่: "🚕", bts: "🚈", mrt: "🚇", xing: "🛺",
+  ของใช้: "🛍️", ช้อปปิ้ง: "🛒", shopping: "🛒",
+  ความบันเทิง: "🎮", เกม: "🎮", หนัง: "🎬", concert: "🎵", ดนตรี: "🎵",
+  สุขภาพ: "💊", ยา: "💊", หมอ: "🏥", hospital: "🏥",
+  การศึกษา: "📚", เรียน: "📚", "ชีทเรียน": "📄", หนังสือ: "📖",
+  ของติ่ง: "🌟", กาชา: "🎰", "ของสะสม": "💿",
+  บ้าน: "🏠", ค่าเช่า: "🏠", ไฟฟ้า: "⚡", น้ำ: "💧", internet: "📡",
+  สัตว์เลี้ยง: "🐾", แมว: "🐱", หมา: "🐶",
+  ท่องเที่ยว: "✈️", travel: "✈️", โรงแรม: "🏨",
+  เงินเดือน: "💰", รายได้: "💚", salary: "💰", income: "💚",
+  ออม: "🐷", ออมเงิน: "🐷", savings: "🐷",
+  อื่นๆ: "📌", other: "📌",
+};
+
+export function getCategoryEmoji(category: string | null | undefined): string {
+  const key = (category ?? "อื่นๆ").trim().toLowerCase();
+  for (const [k, v] of Object.entries(CATEGORY_EMOJI)) {
+    if (key.includes(k.toLowerCase())) return v;
+  }
+  return "📌";
+}
