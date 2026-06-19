@@ -11,6 +11,7 @@ import CatPawFab from "./CatPawFab";
 import GlobalSearch from "./GlobalSearch";
 import NotificationMenu from "./NotificationMenu";
 import QuickAddModal from "./QuickAddModal";
+import HelpDrawer from "./HelpDrawer";
 import { useSound } from "./mascot/SoundProvider";
 import type { Household } from "@/lib/supabase/types";
 
@@ -158,6 +159,7 @@ export default function AppShell({ households, activeHousehold, children, chatPa
               <GlobalSearch householdId={activeHousehold?.id ?? null} currency={activeHousehold?.currency ?? "THB"} />
             </div>
             <button onClick={() => setQuickAddOpen(true)} className="btn-primary hidden min-h-11 shrink-0 sm:inline-flex"><Plus size={17} />Quick add</button>
+            <HelpDrawer />
             <NotificationMenu />
           </div>
         </header>
@@ -224,7 +226,7 @@ export default function AppShell({ households, activeHousehold, children, chatPa
             >
               <div className="flex items-center justify-between px-5 py-4 border-b border-cream-200 dark:border-[#403833]">
                 <span className="font-display text-sm font-semibold text-slate-700 dark:text-slate-300">
-                  🐾 Add new entry
+                  Add with Lucky
                 </span>
                 <button
                   onClick={() => setChatOpen(false)}

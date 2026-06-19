@@ -3,7 +3,13 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { Loader2 } from "lucide-react";
+import { Cat, ChartNoAxesCombined, Loader2, MessageCircle, PiggyBank, Sparkles } from "lucide-react";
+
+const BENEFITS = [
+  { icon: MessageCircle, text: "Tell Lucky what you bought and it logs the entry." },
+  { icon: ChartNoAxesCombined, text: "See household income, expenses and trends together." },
+  { icon: PiggyBank, text: "Build savings goals and keep budgets visible." },
+];
 
 function authMessage(message: string) {
   const messages: Record<string, string> = {
@@ -92,7 +98,7 @@ export default function LoginPage() {
       <div className="hidden lg:flex lg:w-1/2 flex-col items-center justify-center gap-8 p-12 bg-gradient-to-br from-lucky-600 to-lucky-700">
         <div className="text-center">
           <div className="flex items-center justify-center gap-3 mb-6">
-            <span className="text-6xl animate-float">🐱</span>
+            <span className="flex h-24 w-24 items-center justify-center rounded-[2rem] bg-white/15 text-white shadow-puff"><Cat size={54} strokeWidth={1.6} /></span>
           </div>
           <h1 className="font-display text-4xl font-bold text-white leading-tight">
             LuckyTracky
@@ -100,13 +106,9 @@ export default function LoginPage() {
           <p className="mt-3 text-lucky-100 text-lg">Track spending with your cat, every day</p>
         </div>
         <div className="grid grid-cols-1 gap-3 w-full max-w-xs">
-          {[
-            { icon: "🍜", text: "Tell Lucky what you bought — it logs it for you" },
-            { icon: "📊", text: "See your full income & expense overview" },
-            { icon: "🐾", text: "Save money = feed your cat and watch it grow" },
-          ].map((f) => (
+          {BENEFITS.map((f) => (
             <div key={f.text} className="flex items-center gap-3 rounded-2xl bg-white/15 px-4 py-3">
-              <span className="text-xl">{f.icon}</span>
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/10"><f.icon size={19} /></span>
               <p className="text-sm text-white/90">{f.text}</p>
             </div>
           ))}
@@ -117,7 +119,7 @@ export default function LoginPage() {
       <div className="flex flex-1 flex-col items-center justify-center p-6">
         {/* Mobile logo */}
         <div className="mb-8 text-center lg:hidden">
-          <span className="text-5xl animate-float">🐱</span>
+          <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-lucky-100 text-lucky-700 shadow-soft"><Cat size={36} /></span>
           <h1 className="font-display mt-3 text-2xl font-bold text-lucky-700">LuckyTracky</h1>
           <p className="text-sm text-slate-500">Track spending with your cat</p>
         </div>
@@ -125,7 +127,7 @@ export default function LoginPage() {
         <div className="w-full max-w-sm">
           <div className="card p-8 shadow-puff">
             <h2 className="font-display text-xl font-semibold text-slate-900">
-              {mode === "signin" ? "Welcome back 🍀" : "Create an account ✨"}
+              <span className="flex items-center gap-2">{mode === "signup" && <Sparkles size={18} className="text-lucky-500" />}{mode === "signin" ? "Welcome back" : "Create an account"}</span>
             </h2>
             <p className="mt-1 mb-6 text-sm text-slate-500">
               {mode === "signin" ? "Sign in to view your income & expenses" : "Sign up and your household will be set up automatically"}
@@ -134,17 +136,17 @@ export default function LoginPage() {
             <form onSubmit={handleEmailAuth} className="space-y-3">
               {mode === "signup" && (
                 <div>
-                  <label className="label">Display name</label>
-                  <input className="input" value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" />
+                  <label htmlFor="display-name" className="label">Display name</label>
+                  <input id="display-name" className="input" value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" />
                 </div>
               )}
               <div>
-                <label className="label">Email</label>
-                <input className="input" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" />
+                <label htmlFor="email" className="label">Email</label>
+                <input id="email" className="input" type="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" />
               </div>
               <div>
-                <label className="label">Password</label>
-                <input className="input" type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" />
+                <label htmlFor="password" className="label">Password</label>
+                <input id="password" className="input" type="password" autoComplete={mode === "signin" ? "current-password" : "new-password"} required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" />
               </div>
 
               {error && (
@@ -180,6 +182,7 @@ export default function LoginPage() {
             <p className="mt-6 text-center text-sm text-slate-500">
               {mode === "signin" ? "Don't have an account?" : "Already have an account?"}{" "}
               <button
+                type="button"
                 className="font-semibold text-lucky-600 hover:underline"
                 onClick={() => { setMode(mode === "signin" ? "signup" : "signin"); setError(null); }}
               >

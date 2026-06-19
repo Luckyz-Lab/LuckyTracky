@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2, Trash2 } from "lucide-react";
+import { CircleAlert, Loader2, Plus, Trash2, TriangleAlert } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Category, Budget } from "@/lib/supabase/types";
 import { getCategoryTone, getCategoryEmoji } from "@/lib/category-colors";
@@ -72,9 +72,9 @@ export default function BudgetsView({
               initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}
               className="relative mt-4 flex items-center gap-3 rounded-2xl border border-peach-200 bg-peach-50 px-4 py-3 dark:border-[#5a2e26] dark:bg-[#3a201a]"
             >
-              <span className="text-2xl">🙀</span>
+              <CircleAlert size={22} className="shrink-0 text-peach-600" />
               <p className="text-sm font-semibold text-peach-700 dark:text-peach-300">
-                Watch out! {overCount} budget(s) exceeded 🙀
+                {overCount} budget(s) exceeded the monthly limit.
               </p>
             </motion.div>
           )}
@@ -96,7 +96,7 @@ export default function BudgetsView({
           <input className="input" type="number" value={limit} onChange={(e) => setLimit(e.target.value)} placeholder="0" />
         </div>
         <button onClick={add} disabled={saving || !limit} className="btn-primary">
-          {saving ? <Loader2 size={16} className="animate-spin" /> : "➕ Set budget"}
+          {saving ? <Loader2 size={16} className="animate-spin" /> : <Plus size={16} />}Set budget
         </button>
       </section>
 
@@ -150,9 +150,10 @@ export default function BudgetsView({
                         <span className={`metric-number text-sm font-bold ${
                           isOver ? "text-peach-600 dark:text-peach-300" : isWarn ? "text-grape-500 dark:text-grape-300" : "text-slate-600 dark:text-slate-300"
                         }`}>
-                          {pct}%{isOver ? " 🙀" : isWarn ? " ⚠️" : ""}
+                          {pct}%
+                          {(isOver || isWarn) && <TriangleAlert size={13} className="ml-1 inline" aria-label={isOver ? "Over budget" : "Near budget limit"} />}
                         </span>
-                        <button onClick={() => remove(b.id)} className="rounded-full p-1.5 text-slate-300 transition-colors hover:bg-peach-50 hover:text-peach-600 dark:hover:bg-[#5a2e26]">
+                        <button aria-label={`Delete budget for ${b.category_name}`} onClick={() => remove(b.id)} className="flex h-11 w-11 items-center justify-center rounded-xl text-slate-400 transition-colors hover:bg-peach-50 hover:text-peach-600 dark:hover:bg-[#5a2e26]">
                           <Trash2 size={14} />
                         </button>
                       </div>

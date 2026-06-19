@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { Plus, Search, Trash2, Pencil, X, Loader2, Download } from "lucide-react";
+import { ArrowDownCircle, ArrowUpCircle, Check, Download, Loader2, Pencil, Plus, Save, Search, Trash2, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Transaction, Category } from "@/lib/supabase/types";
 import { getCategoryTone, getCategoryEmoji } from "@/lib/category-colors";
@@ -134,8 +134,8 @@ export default function TransactionsView({ householdId, currency, categories, in
         </div>
         <select className="input w-auto" value={type} onChange={(e) => setType(e.target.value)}>
           <option value="">All types</option>
-          <option value="income">Income 💚</option>
-          <option value="expense">Expense 🔴</option>
+          <option value="income">Income</option>
+          <option value="expense">Expense</option>
         </select>
         <select className="input w-auto" value={categoryId} onChange={(e) => setCategoryId(e.target.value)}>
           <option value="">All categories</option>
@@ -238,7 +238,7 @@ export default function TransactionsView({ householdId, currency, categories, in
               <div className="p-6 space-y-4">
                 <div className="flex items-center justify-between">
                   <h2 className="font-display text-lg font-semibold text-slate-900 dark:text-slate-100">
-                    {editing ? "✏️ Edit entry" : "✨ New entry"}
+                    {editing ? <><Pencil size={18} /> Edit entry</> : <><Plus size={18} /> New entry</>}
                   </h2>
                   <button onClick={() => setModalOpen(false)} className="rounded-full p-1.5 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
                     <X size={18} />
@@ -255,7 +255,7 @@ export default function TransactionsView({ householdId, currency, categories, in
                     }`}
                     onClick={() => setForm((f) => ({ ...f, type: "expense", category_name: "อื่นๆ" }))}
                   >
-                    🔴 Expense
+                    <ArrowUpCircle size={16} />Expense
                   </button>
                   <button
                     className={`btn text-sm py-2 transition-all ${
@@ -265,7 +265,7 @@ export default function TransactionsView({ householdId, currency, categories, in
                     }`}
                     onClick={() => setForm((f) => ({ ...f, type: "income", category_name: "อื่นๆ" }))}
                   >
-                    💚 Income
+                    <ArrowDownCircle size={16} />Income
                   </button>
                 </div>
 
@@ -297,7 +297,8 @@ export default function TransactionsView({ householdId, currency, categories, in
                   disabled={saving || !form.item || !form.amount}
                   className="btn-primary w-full py-3"
                 >
-                  {saving ? <Loader2 size={16} className="animate-spin" /> : (editing ? "💾 Save" : "✅ Add entry")}
+                  {saving ? <Loader2 size={16} className="animate-spin" /> : editing ? <Save size={16} /> : <Check size={16} />}
+                  {saving ? "Saving..." : editing ? "Save changes" : "Add entry"}
                 </button>
               </div>
             </motion.div>

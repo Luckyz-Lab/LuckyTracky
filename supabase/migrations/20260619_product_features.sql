@@ -44,6 +44,8 @@ CREATE INDEX IF NOT EXISTS idx_recurring_household_due
   ON recurring_rules(household_id, is_active, next_due_date);
 CREATE INDEX IF NOT EXISTS idx_achievement_household
   ON achievement_unlocks(household_id, unlocked_at DESC);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_tx_recurring_marker
+  ON transactions(raw_input) WHERE source = 'recurring';
 
 ALTER TABLE recurring_rules ENABLE ROW LEVEL SECURITY;
 ALTER TABLE profile_preferences ENABLE ROW LEVEL SECURITY;

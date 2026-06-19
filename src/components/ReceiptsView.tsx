@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Upload, Loader2, ScanLine, Check } from "lucide-react";
+import { Upload, Loader2, ScanLine, Check, Save } from "lucide-react";
 import { getCategoryEmoji } from "@/lib/category-colors";
 import type { Category } from "@/lib/supabase/types";
 import type { ChatTransactionPayload } from "@/lib/chat-types";
@@ -86,7 +86,7 @@ export default function ReceiptsView({
           <label className="flex cursor-pointer flex-col items-center justify-center gap-4 rounded-3xl border-2 border-dashed border-lucky-200 bg-lucky-50/60 p-10 text-center transition-colors hover:border-lucky-400 hover:bg-lucky-50 dark:border-[#403833] dark:bg-[#352e2a] dark:hover:bg-[#403833]">
             {parsing ? (
               <>
-                <span className="text-4xl animate-bounce-soft">🐾</span>
+                <ScanLine size={32} className="animate-pulse text-lucky-500" />
                 <span className="text-sm font-medium text-lucky-700 dark:text-lucky-300">Reading receipt...</span>
               </>
             ) : preview ? (
@@ -149,8 +149,8 @@ export default function ReceiptsView({
                 </select>
               </div>
               <button onClick={save} disabled={saving || saved} className="btn-primary w-full py-3">
-                {saving ? <Loader2 size={16} className="animate-spin" /> : saved ? <Check size={16} /> : null}
-                {saved ? "✅ Saved!" : "💾 Save transaction"}
+                {saving ? <Loader2 size={16} className="animate-spin" /> : saved ? <Check size={16} /> : <Save size={16} />}
+                {saved ? "Saved" : "Save transaction"}
               </button>
             </div>
           )}

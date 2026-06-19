@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Copy, RefreshCw, Check, UserPlus, Loader2, Volume2, VolumeX } from "lucide-react";
+import { Coins, Copy, HousePlus, Mail, MessageCircle, RefreshCw, Check, UserPlus, Loader2, Users, Volume2, VolumeX } from "lucide-react";
 import type { Household } from "@/lib/supabase/types";
 import { useSound } from "./mascot/SoundProvider";
 import CatDecor from "./CatDecor";
@@ -127,6 +127,10 @@ export default function SettingsView({
             </div>
           </div>
           <button
+            type="button"
+            role="switch"
+            aria-checked={soundEnabled}
+            aria-label="Sound effects"
             onClick={toggleSound}
             className={`relative h-7 w-12 rounded-full transition-colors duration-200 focus:outline-none ${
               soundEnabled ? "bg-lucky-500" : "bg-cream-200 dark:bg-[#403833]"
@@ -141,7 +145,7 @@ export default function SettingsView({
 
       {/* Members */}
       <section className="card p-5">
-        <h2 className="section-title mb-4">Household members 👥</h2>
+        <h2 className="section-title mb-4 flex items-center gap-2"><Users size={18} className="text-lucky-600" />Household members</h2>
         <ul className="space-y-2">
           {members.map((m) => (
             <li key={m.profile_id} className="flex items-center justify-between rounded-[1.35rem] border border-cream-200/70 bg-cream-50/75 px-4 py-3 text-sm shadow-soft dark:border-[#403833] dark:bg-[#352e2a]">
@@ -154,15 +158,15 @@ export default function SettingsView({
 
       {/* Invite */}
       <section className="card p-5">
-        <h2 className="section-title mb-1">Invite people 💌</h2>
+        <h2 className="section-title mb-1 flex items-center gap-2"><Mail size={18} className="text-lucky-600" />Invite people</h2>
         <p className="mb-3 text-xs text-slate-500 dark:text-slate-400">Share this code or link to invite others to your household</p>
         <div className="flex items-center gap-2">
           <code className="flex-1 rounded-2xl border border-cream-200 bg-cream-50/75 px-4 py-2.5 font-mono text-sm text-slate-700 dark:border-[#403833] dark:bg-[#352e2a] dark:text-slate-300">{code}</code>
-          <button onClick={copy} className="btn-outline">
+          <button aria-label="Copy invite link" onClick={copy} className="btn-outline">
             {copied ? <Check size={16} className="text-lucky-600" /> : <Copy size={16} />}
           </button>
           {isOwner && (
-            <button onClick={regenerate} disabled={busy} className="btn-outline" title="Regenerate">
+            <button aria-label="Regenerate invite code" onClick={regenerate} disabled={busy} className="btn-outline" title="Regenerate">
               <RefreshCw size={16} className={busy ? "animate-spin" : ""} />
             </button>
           )}
@@ -171,7 +175,7 @@ export default function SettingsView({
 
       {/* Join another household */}
       <section className="card p-5">
-        <h2 className="section-title mb-3">Join another household 🏠</h2>
+        <h2 className="section-title mb-3 flex items-center gap-2"><HousePlus size={18} className="text-lucky-600" />Join another household</h2>
         <div className="flex items-center gap-2">
           <input className="input flex-1" placeholder="Enter invite code" value={joinCode} onChange={(e) => setJoinCode(e.target.value)} />
           <button onClick={join} disabled={busy || !joinCode} className="btn-primary">
@@ -182,7 +186,7 @@ export default function SettingsView({
 
       {/* LINE */}
       <section className="card p-5">
-        <h2 className="section-title mb-1">LINE Bot 💬</h2>
+        <h2 className="section-title mb-1 flex items-center gap-2"><MessageCircle size={18} className="text-[#06C755]" />LINE Bot</h2>
         <p className="mb-3 text-xs text-slate-500 dark:text-slate-400">
           {lineAccount
             ? "Messages from LINE Bot will be recorded to the selected household"
@@ -196,7 +200,7 @@ export default function SettingsView({
 
       {/* Currency */}
       <section className="card p-5">
-        <h2 className="section-title mb-3">Currency 💱</h2>
+        <h2 className="section-title mb-3 flex items-center gap-2"><Coins size={18} className="text-grape-500" />Currency</h2>
         <div className="flex items-center gap-2">
           <select className="input w-40" value={currency} onChange={(e) => setCurrency(e.target.value)} disabled={!isOwner}>
             <option value="THB">THB (฿)</option>

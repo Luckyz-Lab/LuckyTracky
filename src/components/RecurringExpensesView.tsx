@@ -6,12 +6,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import type { Category, RecurringCadence, RecurringRule, TxType } from "@/lib/supabase/types";
 import { formatMoney } from "@/lib/utils";
 import { getCategoryTone } from "@/lib/category-colors";
-
-function cadenceMonthlyAmount(amount: number, cadence: RecurringCadence) {
-  if (cadence === "weekly") return amount * 52 / 12;
-  if (cadence === "yearly") return amount / 12;
-  return amount;
-}
+import { monthlyEquivalent } from "@/lib/recurring";
 
 export default function RecurringExpensesView({ categories, currency }: { categories: Category[]; currency: string }) {
   const [rules, setRules] = useState<RecurringRule[]>([]);
@@ -39,7 +34,7 @@ export default function RecurringExpensesView({ categories, currency }: { catego
     }
   }, [filteredCategories, form.category_name]);
 
-  const monthlyOutflow = useMemo(() => rules.filter((rule) => rule.is_active && rule.type === "expense").reduce((sum, rule) => sum + cadenceMonthlyAmount(Number(rule.amount), rule.cadence), 0), [rules]);
+  const monthlyOutflow = useMemo(() => rules.filter((rule) => rule.is_active && rule.type === "expense").reduce((sum, rule) => sum + monthlyEquivalent(Number(rule.amount), rule.cadence), 0), [rules]);
   const activeCount = rules.filter((rule) => rule.is_active).length;
 
   async function create(event: React.FormEvent) {

@@ -68,7 +68,7 @@ export default function CategoriesView({
           <label className="label">Type</label>
           <select className="input" value={type} onChange={(e) => setType(e.target.value as "expense" | "income")}>
             <option value="expense">Terracotta expense</option>
-            <option value="income">💚 Income</option>
+            <option value="income">Sage income</option>
           </select>
         </div>
         <div className="w-44">
@@ -87,7 +87,7 @@ export default function CategoriesView({
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <CategoryList title="Terracotta expenses" items={expense} onToggle={toggleActive} />
-        <CategoryList title="💚 Income" items={income} onToggle={toggleActive} />
+        <CategoryList title="Sage income" items={income} onToggle={toggleActive} />
       </div>
     </div>
   );
@@ -124,11 +124,12 @@ function CategoryList({
               )}
             </div>
             <button
+              aria-label={`${c.is_active ? "Hide" : "Show"} ${c.name}`}
               onClick={() => onToggle(c)}
-              className="shrink-0 rounded-full p-1.5 text-slate-400 transition-colors hover:bg-cream-100 hover:text-lucky-700 dark:hover:bg-[#403833] dark:hover:text-slate-200"
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-slate-400 transition-colors hover:bg-cream-100 hover:text-lucky-700 dark:hover:bg-[#403833] dark:hover:text-slate-200"
               title={c.is_active ? "Hide" : "Show"}
             >
-              {c.is_active ? <Eye size={15} /> : <EyeOff size={15} />}
+              {c.is_active ? <Eye size={17} /> : <EyeOff size={17} />}
             </button>
           </li>
         ))}

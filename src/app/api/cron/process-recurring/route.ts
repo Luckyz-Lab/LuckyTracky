@@ -1,16 +1,9 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { RecurringCadence } from "@/lib/supabase/types";
+import { nextRecurringDate } from "@/lib/recurring";
 
 export const dynamic = "force-dynamic";
-
-function nextDate(date: string, cadence: RecurringCadence): string {
-  const current = new Date(`${date}T12:00:00Z`);
-  if (cadence === "weekly") current.setUTCDate(current.getUTCDate() + 7);
-  if (cadence === "monthly") current.setUTCMonth(current.getUTCMonth() + 1);
-  if (cadence === "yearly") current.setUTCFullYear(current.getUTCFullYear() + 1);
-  return current.toISOString().slice(0, 10);
-}
 
 export async function GET() {
   const admin = createAdminClient();
@@ -45,7 +38,7 @@ export async function GET() {
     }
     await admin
       .from("recurring_rules")
-      .update({ next_due_date: nextDate(rule.next_due_date, rule.cadence as RecurringCadence) })
+      .update({ next_due_date: nextRecurringDate(rule.next_due_date, rule.cadence as RecurringCadence) })
       .eq("id", rule.id);
   }
   return NextResponse.json({ ok: true, processed: rules?.length ?? 0, created });

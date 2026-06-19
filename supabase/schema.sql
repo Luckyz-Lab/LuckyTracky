@@ -160,6 +160,7 @@ create index if not exists idx_members_profile on household_members(profile_id);
 create index if not exists idx_budgets_household_month on budgets(household_id, month);
 create index if not exists idx_recurring_household_due on recurring_rules(household_id, is_active, next_due_date);
 create index if not exists idx_achievement_household on achievement_unlocks(household_id, unlocked_at desc);
+create unique index if not exists idx_tx_recurring_marker on transactions(raw_input) where source = 'recurring';
 
 -- ─── Helper functions (SECURITY DEFINER to avoid RLS recursion) ──
 create or replace function is_household_member(hid uuid)
