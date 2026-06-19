@@ -6,7 +6,7 @@ import type { Category } from "@/lib/supabase/types";
 
 export const dynamic = "force-dynamic";
 
-export default async function TransactionsPage() {
+export default async function TransactionsPage({ searchParams }: { searchParams?: { q?: string } }) {
   const ctx = await getHouseholdContext();
   if (!ctx) redirect("/login");
   if (!ctx.activeHousehold) return <p className="text-slate-500 dark:text-slate-400">No household found — please create one first.</p>;
@@ -24,6 +24,7 @@ export default async function TransactionsPage() {
       householdId={ctx.activeHousehold.id}
       currency={ctx.activeHousehold.currency}
       categories={(categories ?? []) as Category[]}
+      initialSearch={searchParams?.q ?? ""}
     />
   );
 }

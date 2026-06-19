@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import Mascot, { type MascotSlot } from "@/components/mascot/Mascot";
 import { useSound } from "@/components/mascot/SoundProvider";
@@ -60,7 +60,15 @@ function getMascotMood(balance: number): {
 
 export default function MascotWidget({ balance, dailyRemaining, currency }: Props) {
   const { play } = useSound();
+  const [identity, setIdentity] = useState({ name: "Lucky", breed: "tabby", color: "#FFEFE6", accessory: "collar bell" });
   const mood = useMemo(() => getMascotMood(balance), [balance]);
+
+  useEffect(() => {
+    fetch("/api/preferences").then((response) => response.json()).then((data) => {
+      const preferences = data.preferences;
+      if (preferences) setIdentity({ name: preferences.mascot_name, breed: preferences.mascot_breed, color: preferences.mascot_color, accessory: String(preferences.mascot_accessory).replaceAll("_", " ") });
+    });
+  }, []);
 
   const dailyText = useMemo(() => {
     if (dailyRemaining > 0) return `${fmt(dailyRemaining, currency)} left today`;
@@ -81,6 +89,7 @@ export default function MascotWidget({ balance, dailyRemaining, currency }: Prop
         interactive
         onTap={() => play("tap")}
       />
+      <span className="inline-flex items-center gap-2 rounded-full border border-cream-200 bg-cream-50/80 px-3 py-1 text-xs font-semibold capitalize text-slate-600 shadow-soft dark:border-[#403833] dark:bg-[#352e2a] dark:text-slate-300"><span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: identity.color }} />{identity.name} · {identity.breed} · {identity.accessory}</span>
       <div className="text-center">
         <p className="font-display text-sm font-semibold text-slate-700 dark:text-slate-200 leading-snug">
           {mood.label}

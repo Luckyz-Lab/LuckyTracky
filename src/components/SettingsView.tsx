@@ -6,6 +6,7 @@ import { Copy, RefreshCw, Check, UserPlus, Loader2, Volume2, VolumeX } from "luc
 import type { Household } from "@/lib/supabase/types";
 import { useSound } from "./mascot/SoundProvider";
 import CatDecor from "./CatDecor";
+import MascotStudio from "./MascotStudio";
 
 interface Member {
   profile_id: string;
@@ -111,6 +112,8 @@ export default function SettingsView({
           <p className="page-subtitle">{household.name}</p>
         </div>
       </header>
+
+      <MascotStudio />
 
       {/* App preferences */}
       <section className="card p-5 space-y-4">

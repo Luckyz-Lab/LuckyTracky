@@ -44,6 +44,26 @@ body {
     radial-gradient(940px 600px at -12% 116%, rgba(156, 127, 123, 0.12), transparent 55%);
 }
 
+.theme-calico body {
+  background-color: #fff8f0;
+  background-image: radial-gradient(900px 520px at 0% 0%, rgba(217, 130, 74, 0.18), transparent 60%), radial-gradient(900px 540px at 100% 100%, rgba(97, 83, 74, 0.12), transparent 60%);
+}
+
+.theme-siamese body {
+  background-color: #f3efe9;
+  background-image: radial-gradient(900px 520px at 100% 0%, rgba(159, 137, 119, 0.20), transparent 60%), radial-gradient(800px 500px at 0% 100%, rgba(67, 54, 45, 0.10), transparent 60%);
+}
+
+.theme-black-cat body {
+  background-color: #171719;
+  background-image: radial-gradient(900px 520px at 100% 0%, rgba(230, 169, 163, 0.12), transparent 60%);
+}
+
+.theme-midnight body {
+  background-color: #111827;
+  background-image: radial-gradient(900px 520px at 100% 0%, rgba(169, 188, 198, 0.12), transparent 60%);
+}
+
 /* Soft rounded scrollbars */
 ::-webkit-scrollbar {
   width: 10px;

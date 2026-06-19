@@ -11,8 +11,10 @@ do $$ begin
 exception when duplicate_object then null; end $$;
 
 do $$ begin
-  create type tx_source as enum ('web_chat', 'manual', 'line', 'receipt');
+  create type tx_source as enum ('web_chat', 'manual', 'line', 'receipt', 'recurring');
 exception when duplicate_object then null; end $$;
+
+alter type tx_source add value if not exists 'recurring';
 
 do $$ begin
   create type member_role as enum ('owner', 'member');
@@ -116,9 +118,48 @@ create table if not exists receipt_drafts (
   created_at timestamptz not null default now()
 );
 
+create table if not exists recurring_rules (
+  id uuid primary key default gen_random_uuid(),
+  household_id uuid not null references households(id) on delete cascade,
+  created_by uuid references profiles(id) on delete set null,
+  item text not null,
+  amount numeric(14,2) not null check (amount > 0),
+  type tx_type not null default 'expense',
+  category_id uuid references categories(id) on delete set null,
+  category_name text,
+  cadence text not null check (cadence in ('weekly', 'monthly', 'yearly')),
+  next_due_date date not null,
+  is_active boolean not null default true,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists profile_preferences (
+  profile_id uuid primary key references profiles(id) on delete cascade,
+  theme text not null default 'classic' check (theme in ('classic', 'calico', 'siamese', 'black-cat', 'midnight')),
+  mascot_name text not null default 'Lucky',
+  mascot_breed text not null default 'tabby' check (mascot_breed in ('tabby', 'siamese', 'persian', 'calico')),
+  mascot_color text not null default '#FFEFE6',
+  mascot_accessory text not null default 'collar_bell' check (mascot_accessory in ('none', 'collar_bell', 'royal_crown', 'party_hat', 'detective_cap')),
+  notifications_enabled boolean not null default true,
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists achievement_unlocks (
+  id uuid primary key default gen_random_uuid(),
+  household_id uuid not null references households(id) on delete cascade,
+  achievement_key text not null,
+  unlocked_at timestamptz not null default now(),
+  claimed_at timestamptz,
+  claimed_by uuid references profiles(id) on delete set null,
+  unique (household_id, achievement_key)
+);
+
 create index if not exists idx_tx_household_date on transactions(household_id, date);
 create index if not exists idx_members_profile on household_members(profile_id);
 create index if not exists idx_budgets_household_month on budgets(household_id, month);
+create index if not exists idx_recurring_household_due on recurring_rules(household_id, is_active, next_due_date);
+create index if not exists idx_achievement_household on achievement_unlocks(household_id, unlocked_at desc);
 
 -- ─── Helper functions (SECURITY DEFINER to avoid RLS recursion) ──
 create or replace function is_household_member(hid uuid)
@@ -214,6 +255,14 @@ drop trigger if exists trg_budget_updated on budgets;
 create trigger trg_budget_updated before update on budgets
   for each row execute function set_updated_at();
 
+drop trigger if exists trg_recurring_updated on recurring_rules;
+create trigger trg_recurring_updated before update on recurring_rules
+  for each row execute function set_updated_at();
+
+drop trigger if exists trg_preferences_updated on profile_preferences;
+create trigger trg_preferences_updated before update on profile_preferences
+  for each row execute function set_updated_at();
+
 -- ============================================================
 -- Row Level Security
 -- ============================================================
@@ -226,6 +275,9 @@ alter table budgets enable row level security;
 alter table pending_confirmations enable row level security;
 alter table line_accounts enable row level security;
 alter table receipt_drafts enable row level security;
+alter table recurring_rules enable row level security;
+alter table profile_preferences enable row level security;
+alter table achievement_unlocks enable row level security;
 
 -- profiles: a user sees/edits own profile
 drop policy if exists profiles_self on profiles;
@@ -295,6 +347,31 @@ create policy line_self on line_accounts
 drop policy if exists receipts_all on receipt_drafts;
 create policy receipts_all on receipt_drafts
   for all using (is_household_member(household_id))
+  with check (is_household_member(household_id));
+
+-- recurring_rules
+drop policy if exists recurring_rules_all on recurring_rules;
+create policy recurring_rules_all on recurring_rules
+  for all using (is_household_member(household_id))
+  with check (is_household_member(household_id));
+
+-- profile_preferences
+drop policy if exists profile_preferences_self on profile_preferences;
+create policy profile_preferences_self on profile_preferences
+  for all using (profile_id = auth.uid()) with check (profile_id = auth.uid());
+
+-- achievement_unlocks
+drop policy if exists achievement_unlocks_read on achievement_unlocks;
+create policy achievement_unlocks_read on achievement_unlocks
+  for select using (is_household_member(household_id));
+
+drop policy if exists achievement_unlocks_insert on achievement_unlocks;
+create policy achievement_unlocks_insert on achievement_unlocks
+  for insert with check (is_household_member(household_id));
+
+drop policy if exists achievement_unlocks_update on achievement_unlocks;
+create policy achievement_unlocks_update on achievement_unlocks
+  for update using (is_household_member(household_id))
   with check (is_household_member(household_id));
 
 -- ─── Join household by invite code (SECURITY DEFINER RPC) ──

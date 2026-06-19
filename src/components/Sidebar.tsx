@@ -13,6 +13,8 @@ import {
   LogOut,
   TrendingUp,
   PiggyBank,
+  Repeat2,
+  Trophy,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -24,6 +26,8 @@ const NAV = [
   { href: "/categories", label: "Categories", icon: Tags },
   { href: "/receipts", label: "Scan Receipt", icon: ScanLine },
   { href: "/savings", label: "Savings Goals", icon: PiggyBank },
+  { href: "/recurring", label: "Recurring", icon: Repeat2 },
+  { href: "/achievements", label: "Achievements", icon: Trophy },
   { href: "/settings", label: "Settings", icon: Settings },
 ];
 

@@ -2,7 +2,7 @@
  * Hand-written DB row types (kept in sync with supabase/schema.sql).
  */
 export type TxType = "income" | "expense";
-export type TxSource = "web_chat" | "manual" | "line" | "receipt";
+export type TxSource = "web_chat" | "manual" | "line" | "receipt" | "recurring";
 export type MemberRole = "owner" | "member";
 
 export interface Household {
@@ -75,4 +75,46 @@ export interface PendingConfirmation {
   source: TxSource;
   expires_at: string;
   created_at: string;
+}
+
+export type RecurringCadence = "weekly" | "monthly" | "yearly";
+
+export interface RecurringRule {
+  id: string;
+  household_id: string;
+  created_by: string | null;
+  item: string;
+  amount: number;
+  type: TxType;
+  category_id: string | null;
+  category_name: string | null;
+  cadence: RecurringCadence;
+  next_due_date: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export type AppTheme = "classic" | "calico" | "siamese" | "black-cat" | "midnight";
+export type MascotBreed = "tabby" | "siamese" | "persian" | "calico";
+export type MascotAccessory = "none" | "collar_bell" | "royal_crown" | "party_hat" | "detective_cap";
+
+export interface ProfilePreferences {
+  profile_id: string;
+  theme: AppTheme;
+  mascot_name: string;
+  mascot_breed: MascotBreed;
+  mascot_color: string;
+  mascot_accessory: MascotAccessory;
+  notifications_enabled: boolean;
+  updated_at: string;
+}
+
+export interface AchievementUnlock {
+  id: string;
+  household_id: string;
+  achievement_key: string;
+  unlocked_at: string;
+  claimed_at: string | null;
+  claimed_by: string | null;
 }

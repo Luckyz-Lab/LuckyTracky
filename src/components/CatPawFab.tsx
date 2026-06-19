@@ -20,7 +20,7 @@ export default function CatPawFab({ onClick, label = "Add entry" }: CatPawFabPro
   return (
     <motion.button
       onClick={handleClick}
-      className="xl:hidden fixed bottom-5 right-5 z-40 flex h-16 w-16 flex-col items-center justify-center rounded-full bg-lucky-600 text-white shadow-pop focus:outline-none focus:ring-4 focus:ring-lucky-200"
+      className="xl:hidden fixed bottom-24 right-4 z-40 flex h-14 w-14 flex-col items-center justify-center rounded-2xl bg-lucky-600 text-white shadow-pop focus:outline-none focus:ring-4 focus:ring-lucky-200 lg:bottom-5 lg:right-5 lg:h-16 lg:w-16 lg:rounded-full"
       aria-label={label}
       whileTap={{ scale: 0.82 }}
       whileHover={{ scale: 1.08 }}

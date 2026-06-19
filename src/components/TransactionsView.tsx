@@ -13,14 +13,15 @@ interface Props {
   householdId: string;
   currency: string;
   categories: Category[];
+  initialSearch?: string;
 }
 
 const EMPTY_FORM = { item: "", amount: "", type: "expense", category_name: "อื่นๆ", date: "" };
 
-export default function TransactionsView({ householdId, currency, categories }: Props) {
+export default function TransactionsView({ householdId, currency, categories, initialSearch = "" }: Props) {
   const [rows, setRows] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
-  const [q, setQ] = useState("");
+  const [q, setQ] = useState(initialSearch);
   const [type, setType] = useState("");
   const [categoryId, setCategoryId] = useState("");
   const [from, setFrom] = useState("");
