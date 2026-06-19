@@ -63,8 +63,8 @@ export default function RecurringExpensesView({ categories, currency }: { catego
 
   return (
     <div className="space-y-5">
-      <header className="relative overflow-hidden rounded-[2.25rem] border border-cream-200/80 bg-gradient-to-br from-cream-50 via-lucky-50 to-cream-100 p-5 shadow-puff dark:border-[#403833] dark:from-[#2e2825] dark:via-[#352e2a] dark:to-[#241f1c] sm:flex sm:items-end sm:justify-between">
-        <div className="relative max-w-2xl"><p className="text-xs font-bold uppercase tracking-[0.18em] text-lucky-500">Scheduled cash flow</p><h1 className="mt-2 font-display text-4xl font-bold text-lucky-900 dark:text-cream-50">Recurring expenses</h1><p className="page-subtitle">Track subscriptions, bills and repeated income before they affect the balance.</p></div>
+      <header className="relative overflow-hidden rounded-[2rem] border-2 border-orange-100 bg-white p-6 shadow-soft dark:border-slate-700 dark:bg-slate-900 sm:flex sm:items-end sm:justify-between">
+        <div className="relative max-w-2xl"><p className="text-xs font-bold uppercase tracking-[0.18em] text-lucky-500">Scheduled cash flow</p><h1 className="mt-2 font-display text-4xl font-extrabold text-slate-900 dark:text-white">Recurring expenses</h1><p className="page-subtitle">Track subscriptions, bills and repeated income before they affect the balance.</p></div>
         <button onClick={() => setOpen(true)} className="btn-primary relative mt-4 sm:mt-0"><Plus size={17} />New rule</button>
       </header>
 

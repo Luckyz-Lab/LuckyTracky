@@ -86,12 +86,12 @@ export default function SavingsGoalsView() {
   return (
     <div className="space-y-5">
       {/* Header */}
-      <header className="relative overflow-hidden rounded-[2.25rem] border border-cream-200/80 bg-gradient-to-br from-cream-50 via-lucky-50 to-cream-100 p-5 shadow-puff dark:border-[#403833] dark:from-[#2e2825] dark:via-[#352e2a] dark:to-[#241f1c] sm:flex sm:items-end sm:justify-between">
+      <header className="relative overflow-hidden rounded-[2rem] border-2 border-orange-100 bg-white p-6 shadow-soft dark:border-slate-700 dark:bg-slate-900 sm:flex sm:items-end sm:justify-between">
         <div className="pointer-events-none absolute -right-12 -top-16 h-48 w-48 rounded-full bg-lucky-200/35 blur-3xl" />
         <CatDecor pose="sit" size={112} className="absolute bottom-0 right-8 hidden opacity-90 md:block" />
         <div className="relative">
           <p className="text-xs font-bold uppercase tracking-[0.22em] text-lucky-500">Savings cat room</p>
-          <h1 className="mt-2 font-display text-4xl font-bold tracking-tight text-lucky-900 dark:text-cream-50">Savings Goals</h1>
+          <h1 className="mt-2 font-display text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">Savings Goals</h1>
           <p className="page-subtitle">Save money with your cat — {goals.length} goal(s)</p>
         </div>
         <button onClick={() => setShowForm(true)} className="btn-primary relative mt-4 text-sm sm:mt-0">

@@ -15,6 +15,8 @@ import {
   PiggyBank,
   Repeat2,
   Trophy,
+  MessageSquare,
+  Sparkles,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -28,6 +30,8 @@ const NAV = [
   { href: "/savings", label: "Savings Goals", icon: PiggyBank },
   { href: "/recurring", label: "Recurring", icon: Repeat2 },
   { href: "/achievements", label: "Achievements", icon: Trophy },
+  { href: "/assistant", label: "AI Assistant", icon: MessageSquare },
+  { href: "/mascot", label: "Mascot Studio", icon: Sparkles },
   { href: "/settings", label: "Settings", icon: Settings },
 ];
 
@@ -35,7 +39,7 @@ export default function Sidebar({ collapsed = false }: { collapsed?: boolean }) 
   const pathname = usePathname();
 
   return (
-    <nav className="flex flex-1 flex-col gap-1 min-w-0">
+    <nav className="flex min-w-0 flex-1 flex-col gap-1.5">
       {NAV.map(({ href, label, icon: Icon }) => {
         const active = pathname === href || pathname.startsWith(href + "/");
         return (
@@ -44,18 +48,18 @@ export default function Sidebar({ collapsed = false }: { collapsed?: boolean }) 
             href={href}
             title={collapsed ? label : undefined}
             className={cn(
-              "flex min-h-10 items-center rounded-2xl transition-all duration-150",
-              collapsed ? "justify-center px-2 py-2" : "gap-3 px-3 py-2 text-sm font-medium",
+              "relative flex min-h-12 items-center rounded-2xl transition-all duration-150",
+              collapsed ? "justify-center px-2 py-2" : "gap-3 px-4 py-2 text-sm font-semibold",
               active
-                ? "bg-gradient-to-r from-lucky-300 to-lucky-500 text-white shadow-puff"
-                : "text-slate-600 dark:text-slate-400 hover:bg-lucky-100 hover:text-lucky-700 dark:hover:bg-[#352e2a] dark:hover:text-lucky-300"
+                ? "bg-orange-50 text-orange-600 shadow-soft dark:bg-orange-500/10 dark:text-orange-300 before:absolute before:-left-4 before:h-8 before:w-1 before:rounded-r-full before:bg-orange-500"
+                : "text-slate-500 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white"
             )}
           >
             <Icon
               size={18}
               className={cn(
                 "flex-shrink-0",
-                active ? "text-white/90" : "text-slate-400 dark:text-slate-500"
+                active ? "text-orange-500" : "text-slate-400 dark:text-slate-500"
               )}
             />
             {!collapsed && <span className="truncate">{label}</span>}
@@ -68,7 +72,7 @@ export default function Sidebar({ collapsed = false }: { collapsed?: boolean }) 
           type="submit"
           title={collapsed ? "Sign out" : undefined}
           className={cn(
-            "flex min-h-10 w-full items-center rounded-2xl text-slate-500 transition-colors hover:bg-peach-50 hover:text-peach-600 dark:text-slate-400 dark:hover:bg-[#3a201a] dark:hover:text-peach-300",
+            "flex min-h-12 w-full items-center rounded-2xl text-rose-500 transition-colors hover:bg-rose-50 hover:text-rose-600 dark:text-rose-300 dark:hover:bg-rose-500/10",
             collapsed ? "justify-center px-2 py-2" : "gap-3 px-3 py-2 text-sm font-medium"
           )}
         >

@@ -109,11 +109,11 @@ export default function TransactionsView({ householdId, currency, categories, in
   return (
     <div className="space-y-5">
       {/* Header */}
-      <header className="relative overflow-hidden rounded-[2.25rem] border border-cream-200/80 bg-gradient-to-br from-cream-50 via-lucky-50 to-cream-100 p-5 shadow-puff dark:border-[#403833] dark:from-[#2e2825] dark:via-[#352e2a] dark:to-[#241f1c] sm:flex sm:items-end sm:justify-between">
+      <header className="relative overflow-hidden rounded-[2rem] border-2 border-orange-100 bg-white p-6 shadow-soft dark:border-slate-700 dark:bg-slate-900 sm:flex sm:items-end sm:justify-between">
         <div className="pointer-events-none absolute -right-12 -top-16 h-48 w-48 rounded-full bg-lucky-200/40 blur-3xl" />
         <div className="relative">
           <p className="text-xs font-bold uppercase tracking-[0.22em] text-lucky-500">Money logbook</p>
-          <h1 className="mt-2 font-display text-4xl font-bold tracking-tight text-lucky-900 dark:text-cream-50">Transactions</h1>
+          <h1 className="mt-2 font-display text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">Transactions</h1>
           <p className="page-subtitle">{rows.length} total entries in a soft clay timeline</p>
         </div>
         <div className="relative mt-4 flex gap-2 sm:mt-0">
@@ -146,7 +146,7 @@ export default function TransactionsView({ householdId, currency, categories, in
       </div>
 
       {/* List */}
-      <div className="card overflow-hidden p-3">
+      <div className="card overflow-hidden">
         {loading ? (
           <div className="flex flex-col items-center gap-3 p-10 text-slate-400">
             <Loader2 className="animate-spin" size={28} />
@@ -158,58 +158,17 @@ export default function TransactionsView({ householdId, currency, categories, in
             <p className="text-sm text-slate-400 dark:text-slate-500">No matching transactions</p>
           </div>
         ) : (
-          <ul className="grid gap-3">
-            <AnimatePresence initial={false}>
-              {rows.map((t) => {
-                const tone = getCategoryTone(t.category_name);
-                const emoji = getCategoryEmoji(t.category_name);
-                return (
-                  <motion.li
-                    key={t.id}
-                    initial={{ opacity: 0, x: -16 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: 16, height: 0 }}
-                    transition={{ duration: 0.22 }}
-                    className="group flex items-center justify-between gap-3 rounded-[1.45rem] border border-cream-200/70 bg-cream-50/75 px-4 py-3 shadow-soft transition-all hover:-translate-y-0.5 hover:bg-cream-50 dark:border-[#403833] dark:bg-[#352e2a] dark:hover:bg-[#3a332f]"
-                  >
-                    <div className="flex min-w-0 items-center gap-3">
-                      <span
-                        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl text-xl"
-                        style={{ backgroundColor: tone.bg }}
-                      >
-                        {emoji}
-                      </span>
-                      <div className="min-w-0">
-                        <p className="truncate text-sm font-semibold text-slate-900 dark:text-slate-100">{t.item}</p>
-                        <div className="mt-0.5 flex flex-wrap items-center gap-2">
-                          <span
-                            className="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium"
-                            style={{ backgroundColor: tone.bg, borderColor: tone.border, color: tone.text }}
-                          >
-                            {t.category_name ?? "Other"}
-                          </span>
-                          <span className="text-xs text-slate-400 dark:text-slate-500 tabular-nums">{t.date}</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2 shrink-0">
-                      <span className={`metric-number text-sm ${t.type === "income" ? "text-[#5f7a54] dark:text-[#9cb88f]" : "text-peach-600 dark:text-peach-300"}`}>
-                        {t.type === "income" ? "+" : "-"}{formatMoney(Number(t.amount), currency)}
-                      </span>
-                      <div className="flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button onClick={() => openEdit(t)} className="rounded-xl p-1.5 text-slate-400 transition-colors hover:bg-cream-100 hover:text-lucky-700 dark:hover:bg-[#403833] dark:hover:text-slate-200">
-                          <Pencil size={14} />
-                        </button>
-                        <button onClick={() => remove(t.id)} className="rounded-xl p-1.5 text-slate-400 transition-colors hover:bg-peach-50 hover:text-peach-600 dark:hover:bg-[#5a2e26]">
-                          <Trash2 size={14} />
-                        </button>
-                      </div>
-                    </div>
-                  </motion.li>
-                );
-              })}
-            </AnimatePresence>
-          </ul>
+          <>
+            <div className="hidden overflow-x-auto md:block">
+              <table className="w-full min-w-[760px] text-left">
+                <thead className="bg-slate-50 text-[10px] font-extrabold uppercase tracking-[0.14em] text-slate-400 dark:bg-slate-800"><tr><th className="px-5 py-4">Details</th><th className="px-5 py-4">Category</th><th className="px-5 py-4">Date</th><th className="px-5 py-4 text-right">Amount</th><th className="px-5 py-4 text-right">Actions</th></tr></thead>
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                  {rows.map((t) => { const tone = getCategoryTone(t.category_name); const emoji = getCategoryEmoji(t.category_name); return <tr key={t.id} className="group transition-colors hover:bg-orange-50/40 dark:hover:bg-slate-800/60"><td className="px-5 py-4"><div className="flex items-center gap-3"><span className="flex h-10 w-10 items-center justify-center rounded-xl text-lg" style={{ backgroundColor: tone.bg }}>{emoji}</span><span className="font-semibold text-slate-800 dark:text-slate-100">{t.item}</span></div></td><td className="px-5 py-4"><span className="rounded-full border px-2.5 py-1 text-xs font-semibold" style={{ backgroundColor: tone.bg, borderColor: tone.border, color: tone.text }}>{t.category_name ?? "Other"}</span></td><td className="px-5 py-4 font-mono text-xs text-slate-400">{t.date}</td><td className={`px-5 py-4 text-right font-mono text-sm font-bold ${t.type === "income" ? "text-emerald-500" : "text-rose-500"}`}>{t.type === "income" ? "+" : "-"}{formatMoney(Number(t.amount), currency)}</td><td className="px-5 py-4"><div className="flex justify-end gap-1"><button aria-label={`Edit ${t.item}`} onClick={() => openEdit(t)} className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-400 hover:bg-orange-50 hover:text-orange-500"><Pencil size={15} /></button><button aria-label={`Delete ${t.item}`} onClick={() => remove(t.id)} className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-400 hover:bg-rose-50 hover:text-rose-500"><Trash2 size={15} /></button></div></td></tr>; })}
+                </tbody>
+              </table>
+            </div>
+            <ul className="grid gap-2 p-3 md:hidden">{rows.map((t) => { const tone = getCategoryTone(t.category_name); return <li key={t.id} className="rounded-2xl border-2 border-slate-100 p-4 dark:border-slate-700"><div className="flex items-start justify-between gap-3"><div className="min-w-0"><p className="truncate text-sm font-bold text-slate-800 dark:text-slate-100">{t.item}</p><div className="mt-2 flex items-center gap-2"><span className="rounded-full border px-2 py-0.5 text-xs font-semibold" style={{ backgroundColor: tone.bg, borderColor: tone.border, color: tone.text }}>{t.category_name ?? "Other"}</span><span className="font-mono text-xs text-slate-400">{t.date}</span></div></div><span className={`shrink-0 font-mono text-sm font-bold ${t.type === "income" ? "text-emerald-500" : "text-rose-500"}`}>{t.type === "income" ? "+" : "-"}{formatMoney(Number(t.amount), currency)}</span></div><div className="mt-3 flex justify-end gap-1 border-t border-slate-100 pt-2"><button aria-label={`Edit ${t.item}`} onClick={() => openEdit(t)} className="flex h-11 w-11 items-center justify-center rounded-xl text-slate-400 hover:bg-orange-50 hover:text-orange-500"><Pencil size={16} /></button><button aria-label={`Delete ${t.item}`} onClick={() => remove(t.id)} className="flex h-11 w-11 items-center justify-center rounded-xl text-slate-400 hover:bg-rose-50 hover:text-rose-500"><Trash2 size={16} /></button></div></li>; })}</ul>
+          </>
         )}
       </div>
 

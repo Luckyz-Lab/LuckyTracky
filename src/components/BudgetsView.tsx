@@ -58,12 +58,12 @@ export default function BudgetsView({
   return (
     <div className="space-y-6">
       {/* Header */}
-      <header className="relative overflow-hidden rounded-[2.25rem] border border-cream-200/80 bg-gradient-to-br from-cream-50 via-lucky-50 to-cream-100 p-5 shadow-puff dark:border-[#403833] dark:from-[#2e2825] dark:via-[#352e2a] dark:to-[#241f1c]">
+      <header className="relative overflow-hidden rounded-[2rem] border-2 border-orange-100 bg-white p-6 shadow-soft dark:border-slate-700 dark:bg-slate-900">
         <div className="pointer-events-none absolute -right-14 -top-14 h-48 w-48 rounded-full bg-lucky-200/35 blur-3xl" />
         <CatDecor pose="sit" size={104} className="absolute bottom-0 right-8 hidden opacity-90 md:block" />
         <div className="relative max-w-xl">
           <p className="text-xs font-bold uppercase tracking-[0.22em] text-lucky-500">Budget studio</p>
-          <h1 className="mt-2 font-display text-4xl font-bold tracking-tight text-lucky-900 dark:text-cream-50">Clay budget meters</h1>
+          <h1 className="mt-2 font-display text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">Category budgets</h1>
           <p className="page-subtitle">Set spending limits by category — {monthLabel(month)}</p>
         </div>
         <AnimatePresence>

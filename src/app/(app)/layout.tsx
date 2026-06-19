@@ -13,7 +13,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       <AppShell
         households={ctx.households}
         activeHousehold={ctx.activeHousehold}
-        chatPanel={<ChatPanel householdId={ctx.activeHousehold?.id ?? null} />}
+        chatPanel={<ChatPanel householdId={ctx.activeHousehold?.id ?? null} hideHeader />}
       >
         {children}
       </AppShell>

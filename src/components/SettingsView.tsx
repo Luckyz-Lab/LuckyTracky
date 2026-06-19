@@ -6,7 +6,6 @@ import { Coins, Copy, HousePlus, Mail, MessageCircle, RefreshCw, Check, UserPlus
 import type { Household } from "@/lib/supabase/types";
 import { useSound } from "./mascot/SoundProvider";
 import CatDecor from "./CatDecor";
-import MascotStudio from "./MascotStudio";
 
 interface Member {
   profile_id: string;
@@ -103,17 +102,15 @@ export default function SettingsView({
 
   return (
     <div className="space-y-6">
-      <header className="relative overflow-hidden rounded-[2.25rem] border border-cream-200/80 bg-gradient-to-br from-cream-50 via-lucky-50 to-cream-100 p-5 shadow-puff dark:border-[#403833] dark:from-[#2e2825] dark:via-[#352e2a] dark:to-[#241f1c]">
+      <header className="relative overflow-hidden rounded-[2rem] border-2 border-orange-100 bg-white p-6 shadow-soft dark:border-slate-700 dark:bg-slate-900">
         <div className="pointer-events-none absolute -right-14 -top-14 h-48 w-48 rounded-full bg-lucky-200/35 blur-3xl" />
         <CatDecor pose="sit" size={104} className="absolute bottom-0 right-8 hidden opacity-90 md:block" />
         <div className="relative max-w-xl">
           <p className="text-xs font-bold uppercase tracking-[0.22em] text-lucky-500">Household controls</p>
-          <h1 className="mt-2 font-display text-4xl font-bold tracking-tight text-lucky-900 dark:text-cream-50">Settings</h1>
+          <h1 className="mt-2 font-display text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">Settings</h1>
           <p className="page-subtitle">{household.name}</p>
         </div>
       </header>
-
-      <MascotStudio />
 
       {/* App preferences */}
       <section className="card p-5 space-y-4">

@@ -13,7 +13,7 @@ interface Bubble {
   response?: ChatResponse;
 }
 
-export default function ChatPanel({ householdId }: { householdId: string | null }) {
+export default function ChatPanel({ householdId, hideHeader = false }: { householdId: string | null; hideHeader?: boolean }) {
   const router = useRouter();
   const [messages, setMessages] = useState<Bubble[]>([
     {
@@ -77,13 +77,13 @@ export default function ChatPanel({ householdId }: { householdId: string | null 
 
   return (
     <div className="flex h-full flex-col">
-      <div className="flex items-center gap-2 border-b border-cream-200 px-4 py-3 dark:border-[#403833]">
-        <Sparkles size={16} className="text-lucky-700 dark:text-lucky-300" />
+      {!hideHeader && <div className="flex items-center gap-3 border-b-2 border-slate-100 px-5 py-4 dark:border-slate-800">
+        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-orange-50 text-orange-500"><Sparkles size={17} /></span>
         <div>
-          <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Quick add</h2>
-          <p className="text-xs text-slate-500 dark:text-slate-400">Natural-language logging</p>
+          <h2 className="font-display text-sm font-bold text-slate-900 dark:text-slate-100">Lucky Cat Advisor</h2>
+          <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-500">Active · Natural-language logging</p>
         </div>
-      </div>
+      </div>}
 
       <div ref={scrollRef} className="flex-1 space-y-3 overflow-y-auto p-4">
         {messages.map((b) => (
@@ -96,7 +96,7 @@ export default function ChatPanel({ householdId }: { householdId: string | null 
         )}
       </div>
 
-      <div className="border-t border-cream-200 p-3 dark:border-[#403833]">
+      <div className="border-t-2 border-slate-100 p-3 dark:border-slate-800">
         <div className="flex items-end gap-2">
           <textarea
             className="input max-h-28 min-h-[44px] resize-none"
