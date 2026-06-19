@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { Bot, HelpCircle, LineChart, ReceiptText, Repeat2, Target, X } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 
@@ -14,10 +15,98 @@ const TOPICS = [
 
 export default function HelpDrawer() {
   const [open, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
+
+  useEffect(() => {
+    if (!open) return;
+
+    function closeOnEscape(event: KeyboardEvent) {
+      if (event.key === "Escape") setOpen(false);
+    }
+
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, [open]);
+
+  const drawer = (
+    <AnimatePresence>
+      {open && (
+        <motion.div
+          className="fixed inset-0 z-[200]"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+        >
+          <button
+            aria-label="Close help"
+            className="absolute inset-0 bg-slate-950/45 backdrop-blur-sm"
+            onClick={() => setOpen(false)}
+          />
+          <motion.aside
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="help-title"
+            className="absolute inset-y-0 right-0 flex h-dvh w-full max-w-md flex-col overflow-hidden border-l-2 border-slate-100 bg-white shadow-2xl dark:border-slate-800 dark:bg-[#0f162a]"
+            initial={{ x: "100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "100%" }}
+            transition={{ type: "spring", stiffness: 340, damping: 34 }}
+          >
+            <header className="relative z-10 flex shrink-0 items-start justify-between gap-4 border-b-2 border-slate-100 bg-white p-5 dark:border-slate-800 dark:bg-[#0f162a]">
+              <div className="min-w-0">
+                <p className="text-xs font-bold uppercase tracking-[0.18em] text-orange-500">LuckyTracky guide</p>
+                <h2 id="help-title" className="mt-1 font-display text-2xl font-bold text-slate-900 dark:text-slate-50">
+                  Money tracking, clearly
+                </h2>
+                <p className="mt-2 text-sm leading-6 text-slate-500 dark:text-slate-400">
+                  Each action works with the currently selected household.
+                </p>
+              </div>
+              <button
+                aria-label="Close"
+                onClick={() => setOpen(false)}
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-slate-500 hover:bg-orange-50 hover:text-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-300 dark:hover:bg-slate-800"
+              >
+                <X size={19} />
+              </button>
+            </header>
+            <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain bg-[#faf8f5] p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] dark:bg-[#090e1d]">
+              <ol className="space-y-3">
+                {TOPICS.map((topic, index) => {
+                  const Icon = topic.icon;
+                  return (
+                    <li key={topic.title} className="flex gap-4 rounded-2xl border-2 border-slate-100 bg-white p-4 dark:border-slate-800 dark:bg-[#0f162a]">
+                      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-orange-50 text-orange-600 dark:bg-orange-950/40 dark:text-orange-300">
+                        <Icon size={19} />
+                      </span>
+                      <div className="min-w-0">
+                        <p className="text-xs font-semibold text-orange-600 dark:text-orange-300">Step {index + 1}</p>
+                        <h3 className="mt-0.5 text-sm font-bold text-slate-900 dark:text-slate-100">{topic.title}</h3>
+                        <p className="mt-1 text-sm leading-6 text-slate-500 dark:text-slate-400">{topic.detail}</p>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ol>
+            </div>
+          </motion.aside>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+
   return (
     <>
-      <button aria-label="Open help" onClick={() => setOpen(true)} className="flex h-11 w-11 items-center justify-center rounded-full border border-cream-200 bg-cream-50/80 text-slate-600 transition-colors hover:border-lucky-300 hover:text-lucky-700 focus:outline-none focus:ring-4 focus:ring-lucky-100 dark:border-[#403833] dark:bg-[#2e2825] dark:text-slate-300"><HelpCircle size={18} /></button>
-      <AnimatePresence>{open && <motion.div className="fixed inset-0 z-[110]" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}><button aria-label="Close help" className="absolute inset-0 bg-slate-950/45 backdrop-blur-sm" onClick={() => setOpen(false)} /><motion.aside role="dialog" aria-modal="true" aria-labelledby="help-title" className="absolute bottom-0 right-0 top-0 flex w-full max-w-md flex-col border-l border-cream-200 bg-cream-50 shadow-pop dark:border-[#403833] dark:bg-[#2e2825]" initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }} transition={{ type: "spring", stiffness: 340, damping: 34 }}><header className="flex items-start justify-between gap-4 border-b border-cream-200 p-5 dark:border-[#403833]"><div><p className="text-xs font-bold uppercase tracking-[0.18em] text-lucky-500">LuckyTracky guide</p><h2 id="help-title" className="mt-1 font-display text-2xl font-bold text-slate-900 dark:text-slate-50">Money tracking, clearly</h2><p className="mt-2 text-sm leading-6 text-slate-500 dark:text-slate-400">Each action works with the currently selected household.</p></div><button aria-label="Close" onClick={() => setOpen(false)} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full hover:bg-cream-100 focus:outline-none focus:ring-2 focus:ring-lucky-300 dark:hover:bg-[#403833]"><X size={19} /></button></header><div className="flex-1 overflow-y-auto p-5"><ol className="space-y-3">{TOPICS.map((topic, index) => { const Icon = topic.icon; return <li key={topic.title} className="flex gap-4 rounded-2xl border border-cream-200 bg-cream-50/70 p-4 dark:border-[#403833] dark:bg-[#352e2a]"><span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-lucky-100 text-lucky-700 dark:bg-[#403833] dark:text-lucky-300"><Icon size={19} /></span><div><p className="text-xs font-semibold text-lucky-600 dark:text-lucky-300">Step {index + 1}</p><h3 className="mt-0.5 text-sm font-bold text-slate-900 dark:text-slate-100">{topic.title}</h3><p className="mt-1 text-sm leading-6 text-slate-500 dark:text-slate-400">{topic.detail}</p></div></li>; })}</ol></div></motion.aside></motion.div>}</AnimatePresence>
+      <button
+        aria-label="Open help"
+        onClick={() => setOpen(true)}
+        className="flex h-11 w-11 items-center justify-center rounded-full border-2 border-slate-100 bg-white text-slate-600 transition-colors hover:border-orange-200 hover:text-orange-600 focus:outline-none focus:ring-4 focus:ring-orange-100 dark:border-slate-800 dark:bg-[#0f162a] dark:text-slate-300"
+      >
+        <HelpCircle size={18} />
+      </button>
+      {mounted ? createPortal(drawer, document.body) : null}
     </>
   );
 }
