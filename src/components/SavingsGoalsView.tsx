@@ -5,6 +5,7 @@ import { Plus, Trash2, Target, CalendarDays, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { formatMoney } from "@/lib/utils";
 import { useSound } from "./mascot/SoundProvider";
+import CatDecor from "./CatDecor";
 
 interface SavingsGoal {
   id: string;
@@ -15,11 +16,11 @@ interface SavingsGoal {
 }
 
 function catMood(pct: number): { face: string; label: string; barColor: string; glow: string } {
-  if (pct >= 100) return { face: "🐱🍕", label: "น้องอ้วนตุ๊บแล้ว! ใส่ชุดใหม่เลย ~ 🎊", barColor: "bg-lucky-500", glow: "shadow-puff" };
-  if (pct >= 75)  return { face: "😸", label: "น้องอิ่มเกือบแล้ว เกือบถึงแล้วนะ!", barColor: "bg-lucky-400", glow: "" };
-  if (pct >= 40)  return { face: "😺", label: "น้องพอทน ใส่อาหารเพิ่มได้", barColor: "bg-sky-400", glow: "" };
-  if (pct >= 10)  return { face: "😿", label: "น้องหิวมากเลย เร่งออมหน่อยนะ", barColor: "bg-peach-400", glow: "" };
-  return           { face: "🙀", label: "น้องหิวโซ รีบให้อาหารด้วย!", barColor: "bg-rose-400", glow: "" };
+  if (pct >= 100) return { face: "🐱🍕", label: "Goal reached! Time to celebrate! 🎊", barColor: "bg-lucky-500", glow: "shadow-puff" };
+  if (pct >= 75)  return { face: "😸", label: "Almost there, keep going!", barColor: "bg-lucky-400", glow: "" };
+  if (pct >= 40)  return { face: "😺", label: "Making progress, keep saving!", barColor: "bg-sky-400", glow: "" };
+  if (pct >= 10)  return { face: "😿", label: "Just started, keep it up!", barColor: "bg-peach-400", glow: "" };
+  return           { face: "🙀", label: "Need savings — start now!", barColor: "bg-rose-400", glow: "" };
 }
 
 export default function SavingsGoalsView() {
@@ -77,21 +78,24 @@ export default function SavingsGoalsView() {
 
   if (loading) return (
     <div className="flex flex-col items-center gap-3 py-16 text-slate-400">
-      <span className="text-4xl animate-bounce-soft">🐱</span>
-      <p className="text-sm">กำลังโหลด...</p>
+      <CatDecor pose="walk" size={80} />
+      <p className="text-sm">Loading...</p>
     </div>
   );
 
   return (
     <div className="space-y-5">
       {/* Header */}
-      <header className="flex flex-col gap-3 border-b border-lucky-100/60 dark:border-slate-800 pb-5 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h1 className="page-title">ออมเงิน 🐾</h1>
-          <p className="page-subtitle">เลี้ยงน้องแมวด้วยการออมเงิน — {goals.length} เป้าหมาย</p>
+      <header className="relative overflow-hidden rounded-[2.25rem] border border-cream-200/80 bg-gradient-to-br from-cream-50 via-lucky-50 to-cream-100 p-5 shadow-puff dark:border-[#403833] dark:from-[#2e2825] dark:via-[#352e2a] dark:to-[#241f1c] sm:flex sm:items-end sm:justify-between">
+        <div className="pointer-events-none absolute -right-12 -top-16 h-48 w-48 rounded-full bg-lucky-200/35 blur-3xl" />
+        <CatDecor pose="sit" size={112} className="absolute bottom-0 right-8 hidden opacity-90 md:block" />
+        <div className="relative">
+          <p className="text-xs font-bold uppercase tracking-[0.22em] text-lucky-500">Savings cat room</p>
+          <h1 className="mt-2 font-display text-4xl font-bold tracking-tight text-lucky-900 dark:text-cream-50">Savings Goals</h1>
+          <p className="page-subtitle">Save money with your cat — {goals.length} goal(s)</p>
         </div>
-        <button onClick={() => setShowForm(true)} className="btn-primary text-sm">
-          <Plus size={15} /> ตั้งเป้าหมายใหม่
+        <button onClick={() => setShowForm(true)} className="btn-primary relative mt-4 text-sm sm:mt-0">
+          <Plus size={15} /> New goal
         </button>
       </header>
 
@@ -104,7 +108,7 @@ export default function SavingsGoalsView() {
           >
             <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setShowForm(false)} />
             <motion.div
-              className="relative w-full rounded-t-3xl sm:rounded-3xl sm:max-w-md bg-white dark:bg-slate-900 shadow-2xl"
+              className="relative w-full rounded-t-3xl border border-cream-200 bg-cream-50 shadow-puff dark:border-[#403833] dark:bg-[#2e2825] sm:max-w-md sm:rounded-3xl"
               initial={{ y: 80, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 80, opacity: 0 }}
               transition={{ type: "spring", stiffness: 340, damping: 30 }}
               onClick={(e) => e.stopPropagation()}
@@ -114,29 +118,29 @@ export default function SavingsGoalsView() {
               </div>
               <div className="p-6 space-y-4">
                 <div className="flex items-center justify-between">
-                  <h2 className="font-display text-lg font-semibold text-slate-900 dark:text-slate-100">🎯 ตั้งเป้าหมายออมใหม่</h2>
+                  <h2 className="font-display text-lg font-semibold text-slate-900 dark:text-slate-100">🎯 New savings goal</h2>
                   <button onClick={() => setShowForm(false)} className="rounded-full p-1.5 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"><X size={18} /></button>
                 </div>
                 <div>
-                  <label className="label">ชื่อเป้าหมาย</label>
-                  <input className="input" placeholder="เช่น ทริปญี่ปุ่น, โน้ตบุ๊คใหม่..." value={name} onChange={(e) => setName(e.target.value)} />
+                  <label className="label">Goal name</label>
+                  <input className="input" placeholder="e.g. Japan trip, new laptop..." value={name} onChange={(e) => setName(e.target.value)} />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="label">เป้าหมาย (฿)</label>
+                    <label className="label">Target (฿)</label>
                     <input className="input" type="number" placeholder="0" value={target} onChange={(e) => setTarget(e.target.value)} />
                   </div>
                   <div>
-                    <label className="label">ออมไปแล้ว (฿)</label>
+                    <label className="label">Saved so far (฿)</label>
                     <input className="input" type="number" placeholder="0" value={saved} onChange={(e) => setSaved(e.target.value)} />
                   </div>
                 </div>
                 <div>
-                  <label className="label">กำหนดเสร็จ (ไม่บังคับ)</label>
+                  <label className="label">Deadline (optional)</label>
                   <input className="input" type="date" value={deadline} onChange={(e) => setDeadline(e.target.value)} />
                 </div>
                 <button onClick={create} disabled={submitting || !name || !target} className="btn-primary w-full py-3">
-                  {submitting ? "กำลังสร้าง..." : "🐾 สร้างเป้าหมาย"}
+                  {submitting ? "Creating..." : "🐾 Create goal"}
                 </button>
               </div>
             </motion.div>
@@ -146,18 +150,18 @@ export default function SavingsGoalsView() {
 
       {/* Empty state */}
       {goals.length === 0 && (
-        <div className="card flex flex-col items-center gap-4 py-14 text-center">
-          <span className="text-5xl animate-float">🐱</span>
+        <div className="card flex flex-col items-center gap-4 rounded-[2rem] py-14 text-center">
+          <CatDecor pose="sit" size={90} />
           <div>
-            <p className="font-display text-base font-semibold text-slate-700 dark:text-slate-200">ยังไม่มีเป้าหมายออมเงินเลย</p>
-            <p className="mt-1 text-sm text-slate-400 dark:text-slate-500">น้องหิวมาก รีบออมเงินให้น้องด้วยนะ ~</p>
+            <p className="font-display text-base font-semibold text-slate-700 dark:text-slate-200">No savings goals yet</p>
+            <p className="mt-1 text-sm text-slate-400 dark:text-slate-500">Start saving to feed your cat!</p>
           </div>
-          <button onClick={() => setShowForm(true)} className="btn-primary text-sm">🎯 ตั้งเป้าหมายแรก</button>
+          <button onClick={() => setShowForm(true)} className="btn-primary text-sm">🎯 Set first goal</button>
         </div>
       )}
 
       {/* Goal cards */}
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         <AnimatePresence>
           {goals.map((g) => {
             const pct = g.target_amount > 0 ? Math.min(100, Math.round((g.current_amount / g.target_amount) * 100)) : 0;
@@ -176,7 +180,7 @@ export default function SavingsGoalsView() {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.88 }}
                 transition={{ duration: 0.3 }}
-                className={`card p-5 space-y-4 relative overflow-hidden ${
+                className={`card relative space-y-4 overflow-hidden rounded-[2rem] p-5 transition-all hover:-translate-y-0.5 ${
                   done ? "ring-2 ring-lucky-400 dark:ring-lucky-600" : ""
                 }`}
               >
@@ -187,7 +191,7 @@ export default function SavingsGoalsView() {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
-                      className="absolute inset-0 z-10 flex flex-col items-center justify-center rounded-3xl bg-lucky-50/95 dark:bg-lucky-900/90"
+                      className="absolute inset-0 z-10 flex flex-col items-center justify-center rounded-3xl bg-lucky-50/95 dark:bg-[#352e2a]/95"
                     >
                       <motion.span
                         animate={{ scale: [1, 1.3, 1], rotate: [-10, 10, -10, 0] }}
@@ -217,7 +221,7 @@ export default function SavingsGoalsView() {
                       </div>
                     </div>
                   </div>
-                  <button onClick={() => del(g.id)} className="shrink-0 rounded-full p-1.5 text-slate-300 hover:bg-rose-50 dark:hover:bg-rose-900/30 hover:text-rose-500 transition-colors">
+                  <button onClick={() => del(g.id)} className="shrink-0 rounded-full p-1.5 text-slate-300 transition-colors hover:bg-peach-50 hover:text-peach-600 dark:hover:bg-[#5a2e26]">
                     <Trash2 size={14} />
                   </button>
                 </div>
@@ -227,10 +231,10 @@ export default function SavingsGoalsView() {
                   <div className="flex justify-between text-xs mb-1.5 font-medium">
                     <span className="text-slate-600 dark:text-slate-400">{formatMoney(g.current_amount)} / {formatMoney(g.target_amount)}</span>
                     <span className={done ? "text-lucky-600 dark:text-lucky-400 font-bold" : "text-slate-500 dark:text-slate-400"}>
-                      {done ? "✅ เต็มแล้ว!" : `${pct}%`}
+                      {done ? "✅ Done!" : `${pct}%`}
                     </span>
                   </div>
-                  <div className="relative h-4 rounded-full bg-slate-100 dark:bg-slate-700 overflow-hidden">
+                  <div className="relative h-4 overflow-hidden rounded-full bg-cream-200 dark:bg-[#403833]">
                     <motion.div
                       className={`h-full rounded-full ${mood.barColor} ${mood.glow}`}
                       initial={{ width: 0 }}
@@ -248,21 +252,21 @@ export default function SavingsGoalsView() {
 
                 {monthly !== null && !done && (
                   <p className="text-xs text-slate-500 dark:text-slate-400">
-                    เหลืออีก {monthsLeft} เดือน · ต้องออมเดือนละ {formatMoney(monthly)}
+                    {monthsLeft} month(s) left · save {formatMoney(monthly)}/month
                   </p>
                 )}
 
                 {/* Feed buttons */}
                 {!done && (
                   <div className="space-y-2">
-                    <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">🍚 ให้อาหารน้องแมว</p>
+                    <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">🍚 Feed your cat</p>
                     <div className="flex gap-2 flex-wrap">
                       {[100, 500, 1000, 5000].map((v) => (
                         <motion.button
                           key={v}
                           whileTap={{ scale: 0.85 }}
                           onClick={() => feed(g.id, g.current_amount, v, g.target_amount)}
-                          className="flex-1 min-w-[60px] rounded-2xl border-2 border-lucky-200 dark:border-lucky-800 bg-lucky-50 dark:bg-lucky-900/20 px-2 py-1.5 text-xs font-semibold text-lucky-700 dark:text-lucky-300 hover:bg-lucky-100 dark:hover:bg-lucky-900/40 transition-colors"
+                          className="min-w-[60px] flex-1 rounded-2xl border-2 border-lucky-200 bg-lucky-50 px-2 py-1.5 text-xs font-semibold text-lucky-700 transition-colors hover:bg-lucky-100 dark:border-[#403833] dark:bg-[#352e2a] dark:text-lucky-300 dark:hover:bg-[#403833]"
                         >
                           +{v.toLocaleString()}
                         </motion.button>
@@ -272,8 +276,8 @@ export default function SavingsGoalsView() {
                 )}
 
                 {done && (
-                  <div className="rounded-2xl bg-lucky-50 dark:bg-lucky-900/20 px-4 py-2.5 text-center">
-                    <p className="font-display text-sm font-bold text-lucky-600 dark:text-lucky-400">🎉 น้องอ้วนตุ๊บแล้ว ใส่ชุดใหม่ได้เลย!</p>
+                  <div className="rounded-2xl bg-lucky-50 px-4 py-2.5 text-center dark:bg-[#352e2a]">
+                    <p className="font-display text-sm font-bold text-lucky-600 dark:text-lucky-400">🎉 Goal complete! Your cat is well-fed!</p>
                   </div>
                 )}
               </motion.div>

@@ -34,11 +34,11 @@ export default function AiSummaryButton({
   return (
     <div className="max-w-md">
       <button onClick={generate} disabled={loading} className="btn-outline text-sm">
-        {loading ? <Loader2 size={14} className="animate-spin" /> : <Sparkles size={14} className="text-brand-700" />}
+        {loading ? <Loader2 size={14} className="animate-spin" /> : <Sparkles size={14} className="text-lucky-700" />}
         AI summary
       </button>
       {summary && (
-        <p className="mt-3 whitespace-pre-line rounded-lg border border-brand-100 bg-brand-50 p-3 text-sm leading-6 text-slate-700 shadow-sm">{summary}</p>
+        <p className="mt-3 whitespace-pre-line rounded-2xl border border-cream-200 bg-lucky-50 p-3 text-sm leading-6 text-slate-700 shadow-soft dark:border-[#403833] dark:bg-[#352e2a] dark:text-slate-300">{summary}</p>
       )}
     </div>
   );

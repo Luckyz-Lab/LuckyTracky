@@ -11,7 +11,7 @@ interface EmptyStateProps {
 }
 
 export default function EmptyState({
-  title = "วันนี้ไม่มีใช้จ่ายเลย เก่งมาก!",
+  title = "No spending today. Well done!",
   description,
   action,
   className = "",

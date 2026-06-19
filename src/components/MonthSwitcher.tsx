@@ -21,10 +21,10 @@ export default function MonthSwitcher({ month }: { month: string }) {
   }
 
   return (
-    <div className="flex items-center gap-0.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-1 py-1">
+    <div className="flex items-center gap-0.5 rounded-2xl border border-cream-200 bg-cream-50/80 px-1 py-1 shadow-soft dark:border-[#403833] dark:bg-[#2e2825]">
       <button
         onClick={() => navigate(addMonths(month, -1))}
-        className="flex h-7 w-7 items-center justify-center rounded-md text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+        className="flex h-7 w-7 items-center justify-center rounded-xl text-slate-500 transition-colors hover:bg-lucky-100 hover:text-lucky-700 dark:text-slate-400 dark:hover:bg-[#403833]"
         title="Previous month"
       >
         <ChevronLeft size={15} />
@@ -38,7 +38,7 @@ export default function MonthSwitcher({ month }: { month: string }) {
       <button
         onClick={() => navigate(addMonths(month, 1))}
         disabled={isCurrentMonth}
-        className="flex h-7 w-7 items-center justify-center rounded-md text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+        className="flex h-7 w-7 items-center justify-center rounded-xl text-slate-500 transition-colors hover:bg-lucky-100 hover:text-lucky-700 disabled:cursor-not-allowed disabled:opacity-30 dark:text-slate-400 dark:hover:bg-[#403833]"
         title="Next month"
       >
         <ChevronRight size={15} />
@@ -47,7 +47,7 @@ export default function MonthSwitcher({ month }: { month: string }) {
       {!isCurrentMonth && (
         <button
           onClick={() => navigate(today)}
-          className="ml-1 rounded-md px-2 py-1 text-xs font-medium text-brand-700 dark:text-brand-400 hover:bg-brand-50 dark:hover:bg-brand-900/30 transition-colors"
+          className="ml-1 rounded-xl px-2 py-1 text-xs font-bold text-lucky-700 transition-colors hover:bg-lucky-100 dark:text-lucky-300 dark:hover:bg-[#403833]"
           title="Back to current month"
         >
           Today

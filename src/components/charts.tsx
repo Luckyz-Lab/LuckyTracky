@@ -39,9 +39,9 @@ export function DonutChart({ data }: { data: { category: string; amount: number 
         <Tooltip
           formatter={(v: number) => v.toLocaleString()}
           contentStyle={{
-            borderRadius: 8,
-            border: "1px solid #e2e8f0",
-            boxShadow: "0 12px 28px rgba(15, 23, 42, 0.12)",
+            borderRadius: 12,
+            border: "1px solid #f0d0cc",
+            boxShadow: "0 12px 28px rgba(117, 99, 89, 0.18)",
             fontSize: 12,
           }}
         />
@@ -64,8 +64,8 @@ export function TrendChart({
         <YAxis tick={{ fontSize: 12, fill: "#64748b" }} axisLine={false} tickLine={false} />
         <Tooltip formatter={(v: number) => v.toLocaleString()} />
         <Legend wrapperStyle={{ fontSize: 12, color: "#475569" }} />
-        <Bar dataKey="income" name="Income" fill="#0f766e" radius={[6, 6, 0, 0]} />
-        <Bar dataKey="expense" name="Expense" fill="#e11d48" radius={[6, 6, 0, 0]} />
+        <Bar dataKey="income" name="Income" fill="#7e9b74" radius={[6, 6, 0, 0]} />
+        <Bar dataKey="expense" name="Expense" fill="#c0685e" radius={[6, 6, 0, 0]} />
       </BarChart>
     </ResponsiveContainer>
   );

@@ -6,6 +6,7 @@ import { Upload, Loader2, ScanLine, Check } from "lucide-react";
 import { getCategoryEmoji } from "@/lib/category-colors";
 import type { Category } from "@/lib/supabase/types";
 import type { ChatTransactionPayload } from "@/lib/chat-types";
+import CatDecor from "./CatDecor";
 
 export default function ReceiptsView({
   householdId,
@@ -69,27 +70,32 @@ export default function ReceiptsView({
 
   return (
     <div className="space-y-6">
-      <header className="border-b border-lucky-100/60 dark:border-slate-800 pb-5">
-        <h1 className="page-title">สแกนใบเสร็จ 🧲</h1>
-        <p className="page-subtitle">อัปโหลดสลิปหรือใบเสร็จ น้องจะอ่านแล้วบันทึกให้อัตโนมัติ</p>
+      <header className="relative overflow-hidden rounded-[2.25rem] border border-cream-200/80 bg-gradient-to-br from-cream-50 via-lucky-50 to-cream-100 p-5 shadow-puff dark:border-[#403833] dark:from-[#2e2825] dark:via-[#352e2a] dark:to-[#241f1c]">
+        <div className="pointer-events-none absolute -right-14 -top-14 h-48 w-48 rounded-full bg-lucky-200/35 blur-3xl" />
+        <CatDecor pose="sit" size={108} className="absolute bottom-0 right-8 hidden opacity-90 md:block" />
+        <div className="relative max-w-xl">
+          <p className="text-xs font-bold uppercase tracking-[0.22em] text-lucky-500">Receipt scanner</p>
+          <h1 className="mt-2 font-display text-4xl font-bold tracking-tight text-lucky-900 dark:text-cream-50">Lucky reads receipts</h1>
+          <p className="page-subtitle">Upload a slip or receipt and Lucky will read it and log it automatically</p>
+        </div>
       </header>
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {/* Upload zone */}
         <section className="card p-5">
-          <label className="flex cursor-pointer flex-col items-center justify-center gap-4 rounded-3xl border-2 border-dashed border-lucky-200 dark:border-lucky-800/50 bg-lucky-50/50 dark:bg-lucky-900/10 p-10 text-center hover:border-lucky-400 hover:bg-lucky-50 dark:hover:bg-lucky-900/20 transition-colors">
+          <label className="flex cursor-pointer flex-col items-center justify-center gap-4 rounded-3xl border-2 border-dashed border-lucky-200 bg-lucky-50/60 p-10 text-center transition-colors hover:border-lucky-400 hover:bg-lucky-50 dark:border-[#403833] dark:bg-[#352e2a] dark:hover:bg-[#403833]">
             {parsing ? (
               <>
                 <span className="text-4xl animate-bounce-soft">🐾</span>
-                <span className="text-sm font-medium text-lucky-700 dark:text-lucky-300">น้องกำลังอ่านใบเสร็จ...</span>
+                <span className="text-sm font-medium text-lucky-700 dark:text-lucky-300">Reading receipt...</span>
               </>
             ) : preview ? (
-              <span className="text-sm text-lucky-600 dark:text-lucky-400">คลิกเพื่อเปลี่ยนรูป</span>
+              <span className="text-sm text-lucky-600 dark:text-lucky-400">Click to change image</span>
             ) : (
               <>
                 <Upload size={32} className="text-lucky-400" />
-                <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">คลิกเพื่ออัปโหลดรูป</span>
-                <span className="text-xs text-slate-400">รองรับ JPG, PNG</span>
+                <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">Click to upload image</span>
+                <span className="text-xs text-slate-400">JPG, PNG supported</span>
               </>
             )}
             <input type="file" accept="image/*" className="hidden" onChange={onFile} />
@@ -103,17 +109,17 @@ export default function ReceiptsView({
         {/* Draft result */}
         <section className="card p-5">
           <h2 className="mb-4 flex items-center gap-2 font-display text-sm font-semibold text-slate-700 dark:text-slate-300">
-            <ScanLine size={16} className="text-lucky-600" /> รายการที่อ่านได้
+            <ScanLine size={16} className="text-lucky-600" /> Parsed result
           </h2>
 
           {parsing && (
             <div className="flex flex-col items-center gap-3 py-8">
               <Loader2 size={28} className="animate-spin text-lucky-500" />
-              <p className="text-sm text-slate-400">น้องกำลังอ่านใบเสร็จ...</p>
+              <p className="text-sm text-slate-400">Reading receipt...</p>
             </div>
           )}
           {error && (
-            <p className="rounded-2xl bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-800/50 px-4 py-3 text-sm text-rose-600 dark:text-rose-300">
+            <p className="rounded-2xl border border-peach-200 bg-peach-50 px-4 py-3 text-sm text-peach-600 dark:border-[#5a2e26] dark:bg-[#3a201a] dark:text-peach-300">
               {error}
             </p>
           )}
@@ -121,21 +127,21 @@ export default function ReceiptsView({
           {draft && !parsing && (
             <div className="space-y-3">
               <div>
-                <label className="label">รายการ / ร้าน</label>
+                <label className="label">Item / Store</label>
                 <input className="input" value={draft.item ?? ""} onChange={(e) => setDraft({ ...draft, item: e.target.value })} />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="label">ยอดเงิน</label>
+                  <label className="label">Amount</label>
                   <input className="input" type="number" value={draft.amount ?? ""} onChange={(e) => setDraft({ ...draft, amount: Number(e.target.value) })} />
                 </div>
                 <div>
-                  <label className="label">วันที่</label>
+                  <label className="label">Date</label>
                   <input className="input" type="date" value={draft.date} onChange={(e) => setDraft({ ...draft, date: e.target.value })} />
                 </div>
               </div>
               <div>
-                <label className="label">หมวดหมู่</label>
+                <label className="label">Category</label>
                 <select className="input" value={draft.category} onChange={(e) => setDraft({ ...draft, category: e.target.value })}>
                   {expenseCats.map((c) => (
                     <option key={c.id} value={c.name}>{getCategoryEmoji(c.name)} {c.name}</option>
@@ -144,15 +150,15 @@ export default function ReceiptsView({
               </div>
               <button onClick={save} disabled={saving || saved} className="btn-primary w-full py-3">
                 {saving ? <Loader2 size={16} className="animate-spin" /> : saved ? <Check size={16} /> : null}
-                {saved ? "✅ บันทึกแล้ว!" : "💾 บันทึกรายการ"}
+                {saved ? "✅ Saved!" : "💾 Save transaction"}
               </button>
             </div>
           )}
 
           {!draft && !parsing && !error && (
-            <div className="flex flex-col items-center gap-3 py-10 text-center">
-              <span className="text-4xl">👀</span>
-              <p className="text-sm text-slate-400 dark:text-slate-500">อัปโหลดสลิปแล้วน้องจะอ่านให้เอง</p>
+            <div className="flex flex-col items-center gap-3 rounded-[1.5rem] border-2 border-dashed border-cream-200 bg-cream-50/70 py-10 text-center dark:border-[#403833] dark:bg-[#352e2a]">
+              <CatDecor pose="walk" size={84} />
+              <p className="text-sm text-slate-400 dark:text-slate-500">Upload a receipt and Lucky will read it for you</p>
             </div>
           )}
         </section>

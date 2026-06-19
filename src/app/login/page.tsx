@@ -97,13 +97,13 @@ export default function LoginPage() {
           <h1 className="font-display text-4xl font-bold text-white leading-tight">
             LuckyTracky
           </h1>
-          <p className="mt-3 text-lucky-100 text-lg">จดเงินกับน้องแมว ง่ายๆ ทุกวัน</p>
+          <p className="mt-3 text-lucky-100 text-lg">Track spending with your cat, every day</p>
         </div>
         <div className="grid grid-cols-1 gap-3 w-full max-w-xs">
           {[
-            { icon: "🍜", text: "บอกน้องว่าซื้ออะไร น้องบันทึกให้เอง" },
-            { icon: "📊", text: "ดูภาพรวมรายรับ-จ่ายทั้งเดือน" },
-            { icon: "🐾", text: "ออมเงิน = เลี้ยงน้องแมวให้อ้วนตุ๊บ" },
+            { icon: "🍜", text: "Tell Lucky what you bought — it logs it for you" },
+            { icon: "📊", text: "See your full income & expense overview" },
+            { icon: "🐾", text: "Save money = feed your cat and watch it grow" },
           ].map((f) => (
             <div key={f.text} className="flex items-center gap-3 rounded-2xl bg-white/15 px-4 py-3">
               <span className="text-xl">{f.icon}</span>
@@ -119,31 +119,31 @@ export default function LoginPage() {
         <div className="mb-8 text-center lg:hidden">
           <span className="text-5xl animate-float">🐱</span>
           <h1 className="font-display mt-3 text-2xl font-bold text-lucky-700">LuckyTracky</h1>
-          <p className="text-sm text-slate-500">จดเงินกับน้องแมว</p>
+          <p className="text-sm text-slate-500">Track spending with your cat</p>
         </div>
 
         <div className="w-full max-w-sm">
           <div className="card p-8 shadow-puff">
             <h2 className="font-display text-xl font-semibold text-slate-900">
-              {mode === "signin" ? "ยินดีต้อนรับกลับมา 🍀" : "สร้างบัญชีใหม่ ✨"}
+              {mode === "signin" ? "Welcome back 🍀" : "Create an account ✨"}
             </h2>
             <p className="mt-1 mb-6 text-sm text-slate-500">
-              {mode === "signin" ? "เข้าสู่ระบบเพื่อดูรายรับ-รายจ่าย" : "สมัครแล้วระบบตั้งบ้านให้อัตโนมัติ"}
+              {mode === "signin" ? "Sign in to view your income & expenses" : "Sign up and your household will be set up automatically"}
             </p>
 
             <form onSubmit={handleEmailAuth} className="space-y-3">
               {mode === "signup" && (
                 <div>
-                  <label className="label">ชื่อที่แสดง</label>
-                  <input className="input" value={name} onChange={(e) => setName(e.target.value)} placeholder="ชื่อของคุณ" />
+                  <label className="label">Display name</label>
+                  <input className="input" value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" />
                 </div>
               )}
               <div>
-                <label className="label">อีเมล</label>
+                <label className="label">Email</label>
                 <input className="input" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" />
               </div>
               <div>
-                <label className="label">รหัสผ่าน</label>
+                <label className="label">Password</label>
                 <input className="input" type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" />
               </div>
 
@@ -160,30 +160,30 @@ export default function LoginPage() {
 
               <button type="submit" className="btn-primary w-full py-3" disabled={loading}>
                 {loading && <Loader2 className="animate-spin" size={16} />}
-                {mode === "signin" ? "เข้าสู่ระบบ" : "สมัครสมาชิก"}
+                {mode === "signin" ? "Sign in" : "Create account"}
               </button>
             </form>
 
             <div className="my-4 flex items-center gap-3 text-xs text-slate-400">
-              <span className="h-px flex-1 bg-slate-200" /> หรือ <span className="h-px flex-1 bg-slate-200" />
+              <span className="h-px flex-1 bg-slate-200" /> or <span className="h-px flex-1 bg-slate-200" />
             </div>
 
             <div className="space-y-2">
               <a href="/auth/google?next=/dashboard" className="btn-outline w-full">
-                <span className="text-base">G</span> ดำเนินการต่อด้วย Google
+                <span className="text-base">G</span> Continue with Google
               </a>
               <a href="/api/auth/line/start" className="btn w-full bg-[#06C755] text-white hover:bg-[#05b34c] rounded-full">
-                <span className="font-bold text-base">LINE</span> ดำเนินการต่อด้วย LINE
+                <span className="font-bold text-base">LINE</span> Continue with LINE
               </a>
             </div>
 
             <p className="mt-6 text-center text-sm text-slate-500">
-              {mode === "signin" ? "ยังไม่มีบัญชี?" : "มีบัญชีแล้ว?"}{" "}
+              {mode === "signin" ? "Don't have an account?" : "Already have an account?"}{" "}
               <button
                 className="font-semibold text-lucky-600 hover:underline"
                 onClick={() => { setMode(mode === "signin" ? "signup" : "signin"); setError(null); }}
               >
-                {mode === "signin" ? "สมัครเลย" : "เข้าสู่ระบบ"}
+                {mode === "signin" ? "Sign up" : "Sign in"}
               </button>
             </p>
           </div>

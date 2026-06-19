@@ -6,17 +6,19 @@ export interface CategoryTone {
   fill: string;
 }
 
+// "Cozy Clay" harmonized warm family (Color Set 018) — every tone shares the
+// same warm, muted profile (soft bg, gentle border, readable text, dusty fill)
+// so categories read as one cohesive terracotta/taupe palette, never clashing.
 const CATEGORY_TONES: CategoryTone[] = [
-  { bg: "#eff6ff", border: "#bfdbfe", text: "#1d4ed8", dot: "#2563eb", fill: "#2563eb" },
-  { bg: "#f0fdf4", border: "#bbf7d0", text: "#15803d", dot: "#16a34a", fill: "#16a34a" },
-  { bg: "#fff7ed", border: "#fed7aa", text: "#c2410c", dot: "#f97316", fill: "#f97316" },
-  { bg: "#fdf2f8", border: "#fbcfe8", text: "#be185d", dot: "#db2777", fill: "#db2777" },
-  { bg: "#f5f3ff", border: "#ddd6fe", text: "#6d28d9", dot: "#7c3aed", fill: "#7c3aed" },
-  { bg: "#ecfeff", border: "#a5f3fc", text: "#0e7490", dot: "#0891b2", fill: "#0891b2" },
-  { bg: "#fefce8", border: "#fde68a", text: "#a16207", dot: "#ca8a04", fill: "#ca8a04" },
-  { bg: "#f1f5f9", border: "#cbd5e1", text: "#334155", dot: "#475569", fill: "#475569" },
-  { bg: "#fff1f2", border: "#fecdd3", text: "#be123c", dot: "#e11d48", fill: "#e11d48" },
-  { bg: "#eef2ff", border: "#c7d2fe", text: "#4338ca", dot: "#4f46e5", fill: "#4f46e5" },
+  { bg: "#fbedea", border: "#f0d0cc", text: "#a14a3f", dot: "#e6a9a3", fill: "#e6a9a3" }, // terracotta
+  { bg: "#faeae7", border: "#eec6bf", text: "#9e4034", dot: "#c57168", fill: "#c57168" }, // brick
+  { bg: "#fbf1e2", border: "#f0dbb8", text: "#8a5e1a", dot: "#d9a45b", fill: "#d9a45b" }, // amber
+  { bg: "#f3eeec", border: "#ddd0cb", text: "#6e574f", dot: "#9c7f7b", fill: "#9c7f7b" }, // mauve
+  { bg: "#eef2ea", border: "#cfdcc6", text: "#4f6543", dot: "#7e9b74", fill: "#7e9b74" }, // sage
+  { bg: "#f7efe8", border: "#e4cdb8", text: "#7e5530", dot: "#b98a6e", fill: "#b98a6e" }, // caramel
+  { bg: "#f7edee", border: "#e3cace", text: "#8c5258", dot: "#c99ca0", fill: "#c99ca0" }, // rose-taupe
+  { bg: "#f3f0ea", border: "#dbd3c2", text: "#665b43", dot: "#a89178", fill: "#a89178" }, // khaki
+  { bg: "#edf1f3", border: "#cad6dc", text: "#4e626c", dot: "#8fa3b0", fill: "#8fa3b0" }, // dusty slate
 ];
 
 function hashCategory(category: string) {

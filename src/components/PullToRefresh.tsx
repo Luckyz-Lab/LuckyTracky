@@ -78,7 +78,7 @@ export default function PullToRefresh({ onRefresh, children }: PullToRefreshProp
                 )}
               </div>
               <p className="mt-1 text-xs text-lucky-600 font-medium">
-                {refreshing ? "กำลังโหลด..." : progress >= 1 ? "ปล่อยเลย!" : "ดึงลงเพื่อรีเฟรช"}
+                {refreshing ? "Loading..." : progress >= 1 ? "Release to refresh!" : "Pull down to refresh"}
               </p>
             </div>
           </motion.div>

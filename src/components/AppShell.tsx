@@ -57,25 +57,28 @@ export default function AppShell({ households, activeHousehold, children, chatPa
   }
 
   const iconBtn =
-    "flex items-center gap-3 rounded-2xl py-2 text-sm font-medium text-slate-500 dark:text-slate-400 hover:bg-lucky-50 hover:text-lucky-700 dark:hover:bg-slate-800 dark:hover:text-lucky-300 transition-all duration-150";
+    "flex items-center gap-3 rounded-2xl py-2 text-sm font-medium text-slate-500 transition-all duration-150 hover:bg-lucky-100 hover:text-lucky-700 dark:text-slate-400 dark:hover:bg-[#352e2a] dark:hover:text-lucky-300";
 
   return (
-    <div className="flex h-screen overflow-hidden bg-cream-100 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-200">
+    <div className="flex h-screen overflow-hidden text-slate-900 dark:text-slate-100 transition-colors duration-200">
       {/* ── Sidebar ───────────────────────────────────────── */}
       <aside
-        className={`hidden lg:flex flex-col gap-4 border-r border-lucky-100/60 dark:border-slate-800 bg-white dark:bg-slate-900 transition-all duration-300 ease-in-out overflow-hidden flex-shrink-0 ${
+        className={`hidden lg:flex flex-col gap-4 border-r border-cream-200/80 dark:border-[#403833] bg-cream-50/95 dark:bg-[#2e2825] transition-all duration-300 ease-in-out overflow-hidden flex-shrink-0 ${
           sidebarOpen ? "w-72 p-4" : "w-[68px] p-3"
         }`}
+        style={{
+          boxShadow: "0 10px 24px -10px rgba(117, 99, 89, 0.28), inset 0 2px 4px rgba(255, 255, 255, 0.55), inset 0 -3px 6px rgba(117, 99, 89, 0.10)",
+        }}
       >
         {/* Logo */}
         <div className="flex items-center gap-3 px-1 py-1 flex-shrink-0">
-          <span className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl bg-lucky-600 text-white shadow-puff text-xl">
+          <span className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-lucky-300 to-lucky-500 text-white shadow-puff text-xl">
             🍀
           </span>
           {sidebarOpen && (
             <div className="min-w-0 overflow-hidden">
               <span className="block font-display text-base font-semibold tracking-tight truncate text-slate-800 dark:text-slate-100">LuckyTracky</span>
-              <span className="block text-xs text-slate-400 dark:text-slate-500">จดเงินกับน้องแมว</span>
+              <span className="block text-xs text-slate-400 dark:text-slate-500">Track your spending</span>
             </div>
           )}
         </div>
@@ -94,40 +97,45 @@ export default function AppShell({ households, activeHousehold, children, chatPa
             <>
               <button
                 onClick={toggleSound}
-                title={soundEnabled ? "ปิดเสียง" : "เปิดเสียง"}
+                title={soundEnabled ? "Mute sound" : "Sound on"}
                 className={`${iconBtn} ${sidebarOpen ? "px-3" : "px-2 justify-center"}`}
               >
                 {soundEnabled ? <Volume2 size={17} /> : <VolumeX size={17} />}
-                {sidebarOpen && (soundEnabled ? "ปิดเสียง" : "เปิดเสียง")}
+                {sidebarOpen && (soundEnabled ? "Mute" : "Sound")}
               </button>
               <button
                 onClick={toggleTheme}
-                title={dark ? "โหมดสว่าง" : "โหมดมืด"}
+                title={dark ? "Light mode" : "Dark mode"}
                 className={`${iconBtn} ${sidebarOpen ? "px-3" : "px-2 justify-center"}`}
               >
                 {dark ? <Sun size={17} /> : <Moon size={17} />}
-                {sidebarOpen && (dark ? "โหมดสว่าง" : "โหมดมืด")}
+                {sidebarOpen && (dark ? "Light mode" : "Dark mode")}
               </button>
             </>
           )}
           <button
             onClick={toggleSidebar}
-            title={sidebarOpen ? "ย่อ sidebar" : "ขยาย sidebar"}
+            title={sidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
             className={`${iconBtn} ${sidebarOpen ? "px-3" : "px-2 justify-center"}`}
           >
             {sidebarOpen ? <PanelLeftClose size={17} /> : <PanelLeftOpen size={17} />}
-            {sidebarOpen && "ย่อเมนู"}
+            {sidebarOpen && "Collapse"}
           </button>
         </div>
       </aside>
 
       {/* ── Main content ──────────────────────────────────── */}
       <main className="flex-1 overflow-y-auto">
-        <div className="mx-auto max-w-6xl px-4 py-5 md:px-8 md:py-8">{children}</div>
+        <div className="mx-auto max-w-7xl px-4 py-5 md:px-8 md:py-8">{children}</div>
       </main>
 
       {/* ── Chat panel (desktop) ──────────────────────────── */}
-      <aside className="hidden w-80 border-l border-lucky-100/60 dark:border-slate-800 bg-white dark:bg-slate-900 xl:flex xl:flex-col">
+      <aside
+        className="hidden w-80 border-l border-cream-200/80 dark:border-[#403833] bg-cream-50/95 dark:bg-[#2e2825] xl:flex xl:flex-col"
+        style={{
+          boxShadow: "-4px 0 24px -10px rgba(117, 99, 89, 0.25), inset 2px 0 4px rgba(255, 255, 255, 0.50), inset 0 -3px 6px rgba(117, 99, 89, 0.08)",
+        }}
+      >
         {chatPanel}
       </aside>
 
@@ -148,16 +156,19 @@ export default function AppShell({ households, activeHousehold, children, chatPa
               onClick={() => setChatOpen(false)}
             />
             <motion.div
-              className="relative flex flex-col bg-white dark:bg-slate-900 rounded-t-3xl shadow-2xl"
-              style={{ height: "75dvh" }}
+              className="relative flex flex-col bg-cream-50 dark:bg-[#2e2825] rounded-t-3xl"
+              style={{
+                height: "75dvh",
+                boxShadow: "0 -8px 32px -8px rgba(117, 99, 89, 0.35), inset 0 2px 4px rgba(255, 255, 255, 0.50)",
+              }}
               initial={{ y: "100%" }}
               animate={{ y: 0 }}
               exit={{ y: "100%" }}
               transition={{ type: "spring", stiffness: 320, damping: 32 }}
             >
-              <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 dark:border-slate-800">
+              <div className="flex items-center justify-between px-5 py-4 border-b border-cream-200 dark:border-[#403833]">
                 <span className="font-display text-sm font-semibold text-slate-700 dark:text-slate-300">
-                  🐾 เพิ่มรายการใหม่
+                  🐾 Add new entry
                 </span>
                 <button
                   onClick={() => setChatOpen(false)}

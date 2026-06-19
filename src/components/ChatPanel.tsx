@@ -19,7 +19,7 @@ export default function ChatPanel({ householdId }: { householdId: string | null 
     {
       id: "welcome",
       role: "bot",
-      text: "Hi! Type something like \"กินข้าว 80\" or \"เงินเดือน 25000\" and I'll log it.",
+      text: "Hi! Type something like \"coffee 80\" or \"salary 25000\" and I'll log it.",
     },
   ]);
   const [input, setInput] = useState("");
@@ -77,11 +77,11 @@ export default function ChatPanel({ householdId }: { householdId: string | null 
 
   return (
     <div className="flex h-full flex-col">
-      <div className="flex items-center gap-2 border-b border-slate-200 px-4 py-3">
-        <Sparkles size={16} className="text-brand-700" />
+      <div className="flex items-center gap-2 border-b border-cream-200 px-4 py-3 dark:border-[#403833]">
+        <Sparkles size={16} className="text-lucky-700 dark:text-lucky-300" />
         <div>
-          <h2 className="text-sm font-semibold text-slate-900">Quick add</h2>
-          <p className="text-xs text-slate-500">Natural-language logging</p>
+          <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Quick add</h2>
+          <p className="text-xs text-slate-500 dark:text-slate-400">Natural-language logging</p>
         </div>
       </div>
 
@@ -96,13 +96,13 @@ export default function ChatPanel({ householdId }: { householdId: string | null 
         )}
       </div>
 
-      <div className="border-t border-slate-200 p-3">
+      <div className="border-t border-cream-200 p-3 dark:border-[#403833]">
         <div className="flex items-end gap-2">
           <textarea
             className="input max-h-28 min-h-[44px] resize-none"
             rows={1}
             value={input}
-            placeholder={householdId ? "กินข้าว 80" : "No household selected"}
+            placeholder={householdId ? 'e.g. "coffee 80" or "salary 25000"' : "No household selected"}
             disabled={!householdId}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => {
@@ -131,7 +131,7 @@ function Message({
   if (bubble.role === "user") {
     return (
       <div className="flex justify-end">
-        <div className="max-w-[80%] rounded-2xl rounded-br-sm bg-brand-600 px-3 py-2 text-sm text-white">
+        <div className="max-w-[80%] rounded-2xl rounded-br-sm bg-gradient-to-br from-lucky-300 to-lucky-500 px-3 py-2 text-sm text-white shadow-soft">
           {bubble.text}
         </div>
       </div>
@@ -141,7 +141,7 @@ function Message({
   if (bubble.text) {
     return (
       <div className="flex justify-start">
-        <div className="max-w-[85%] rounded-lg rounded-bl-sm bg-slate-100 px-3 py-2 text-sm leading-6 text-slate-700">
+        <div className="max-w-[85%] rounded-2xl rounded-bl-sm border border-cream-200 bg-lucky-50 px-3 py-2 text-sm leading-6 text-slate-700 shadow-soft dark:border-[#403833] dark:bg-[#352e2a] dark:text-slate-300">
           {bubble.text}
         </div>
       </div>
@@ -153,7 +153,7 @@ function Message({
   if (r.kind === "saved_many")
     return (
       <div className="space-y-2">
-        <p className="text-sm font-semibold text-brand-700">{r.message}</p>
+        <p className="text-sm font-semibold text-lucky-700 dark:text-lucky-300">{r.message}</p>
         {r.transactions.map((tx, index) => (
           <TxCard key={`${tx.item}-${tx.amount}-${index}`} tx={tx} tone="saved" />
         ))}
@@ -162,7 +162,7 @@ function Message({
   if (r.kind === "confirm")
     return (
       <div className="space-y-2">
-        <p className="text-sm text-slate-600">{r.message}</p>
+        <p className="text-sm text-slate-600 dark:text-slate-300">{r.message}</p>
         <TxCard tx={r.transaction} tone="confirm" />
         <div className="flex gap-2">
           <button onClick={() => onConfirm(r.pendingId, "confirm")} className="btn-primary flex-1 py-1.5 text-xs">
@@ -176,18 +176,18 @@ function Message({
     );
   if (r.kind === "missing")
     return (
-      <div className="rounded-lg rounded-bl-sm bg-amber-50 px-3 py-2 text-sm text-amber-700">
+      <div className="rounded-2xl rounded-bl-sm border border-grape-200 bg-grape-100 px-3 py-2 text-sm text-grape-500 dark:border-[#4a3824] dark:bg-[#3a3024]">
         {r.message}
       </div>
     );
   if (r.kind === "summary")
     return (
-      <div className="rounded-lg rounded-bl-sm bg-slate-100 px-3 py-2 text-sm leading-6 text-slate-700 whitespace-pre-line">
+      <div className="rounded-2xl rounded-bl-sm border border-cream-200 bg-lucky-50 px-3 py-2 text-sm leading-6 text-slate-700 whitespace-pre-line dark:border-[#403833] dark:bg-[#352e2a] dark:text-slate-300">
         {r.message}
       </div>
     );
   return (
-    <div className="rounded-lg rounded-bl-sm bg-red-50 px-3 py-2 text-sm text-red-600">{r.message}</div>
+    <div className="rounded-2xl rounded-bl-sm border border-peach-200 bg-peach-50 px-3 py-2 text-sm text-peach-600 dark:border-[#5a2e26] dark:bg-[#3a201a] dark:text-peach-300">{r.message}</div>
   );
 }
 
@@ -198,24 +198,24 @@ function TxCard({ tx, tone }: { tx: ChatTransactionPayload; tone: "saved" | "con
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           {income ? (
-            <ArrowDownCircle size={18} className="text-brand-600" />
+            <ArrowDownCircle size={18} className="text-[#5f7a54] dark:text-[#9cb88f]" />
           ) : (
-            <ArrowUpCircle size={18} className="text-rose-500" />
+            <ArrowUpCircle size={18} className="text-peach-600 dark:text-peach-300" />
           )}
           <div>
-            <p className="text-sm font-semibold text-slate-900">{tx.item}</p>
-            <p className="text-xs text-slate-400">
+            <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">{tx.item}</p>
+            <p className="text-xs text-slate-400 dark:text-slate-500">
               {tx.category} · {tx.date}
             </p>
           </div>
         </div>
-        <p className={income ? "metric-number text-sm text-brand-700" : "metric-number text-sm text-rose-600"}>
+        <p className={income ? "metric-number text-sm text-[#5f7a54] dark:text-[#9cb88f]" : "metric-number text-sm text-peach-600 dark:text-peach-300"}>
           {income ? "+" : "-"}
           {tx.amount != null ? formatMoney(tx.amount) : "?"}
         </p>
       </div>
       {tone === "saved" && (
-        <p className="mt-1 flex items-center gap-1 text-xs text-brand-600">
+        <p className="mt-1 flex items-center gap-1 text-xs text-lucky-600 dark:text-lucky-300">
           <Check size={12} /> Saved
         </p>
       )}

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Copy, RefreshCw, Check, UserPlus, Loader2, Volume2, VolumeX } from "lucide-react";
 import type { Household } from "@/lib/supabase/types";
 import { useSound } from "./mascot/SoundProvider";
+import CatDecor from "./CatDecor";
 
 interface Member {
   profile_id: string;
@@ -101,29 +102,34 @@ export default function SettingsView({
 
   return (
     <div className="space-y-6">
-      <header className="border-b border-lucky-100/60 dark:border-slate-800 pb-5">
-        <h1 className="page-title">ตั้งค่า ⚙️</h1>
-        <p className="page-subtitle">{household.name}</p>
+      <header className="relative overflow-hidden rounded-[2.25rem] border border-cream-200/80 bg-gradient-to-br from-cream-50 via-lucky-50 to-cream-100 p-5 shadow-puff dark:border-[#403833] dark:from-[#2e2825] dark:via-[#352e2a] dark:to-[#241f1c]">
+        <div className="pointer-events-none absolute -right-14 -top-14 h-48 w-48 rounded-full bg-lucky-200/35 blur-3xl" />
+        <CatDecor pose="sit" size={104} className="absolute bottom-0 right-8 hidden opacity-90 md:block" />
+        <div className="relative max-w-xl">
+          <p className="text-xs font-bold uppercase tracking-[0.22em] text-lucky-500">Household controls</p>
+          <h1 className="mt-2 font-display text-4xl font-bold tracking-tight text-lucky-900 dark:text-cream-50">Settings</h1>
+          <p className="page-subtitle">{household.name}</p>
+        </div>
       </header>
 
       {/* App preferences */}
       <section className="card p-5 space-y-4">
-        <h2 className="section-title">การแสดงผลและเสียง</h2>
-        <div className="flex items-center justify-between rounded-2xl bg-slate-50 dark:bg-slate-800/50 px-4 py-3">
+        <h2 className="section-title">Preferences</h2>
+        <div className="flex items-center justify-between rounded-[1.35rem] border border-cream-200/70 bg-cream-50/75 px-4 py-3 shadow-soft dark:border-[#403833] dark:bg-[#352e2a]">
           <div className="flex items-center gap-3">
             {soundEnabled ? <Volume2 size={18} className="text-lucky-600" /> : <VolumeX size={18} className="text-slate-400" />}
             <div>
-              <p className="text-sm font-medium text-slate-800 dark:text-slate-200">เสียงเอฟเฟกต์</p>
-              <p className="text-xs text-slate-500 dark:text-slate-400">{soundEnabled ? "เปิดอยู่" : "ปิดอยู่"}</p>
+              <p className="text-sm font-medium text-slate-800 dark:text-slate-200">Sound effects</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">{soundEnabled ? "On" : "Off"}</p>
             </div>
           </div>
           <button
             onClick={toggleSound}
             className={`relative h-7 w-12 rounded-full transition-colors duration-200 focus:outline-none ${
-              soundEnabled ? "bg-lucky-500" : "bg-slate-200 dark:bg-slate-700"
+              soundEnabled ? "bg-lucky-500" : "bg-cream-200 dark:bg-[#403833]"
             }`}
           >
-            <span className={`absolute top-0.5 left-0.5 h-6 w-6 rounded-full bg-white shadow transition-transform duration-200 ${
+            <span className={`absolute top-0.5 left-0.5 h-6 w-6 rounded-full bg-cream-50 shadow transition-transform duration-200 ${
               soundEnabled ? "translate-x-5" : "translate-x-0"
             }`} />
           </button>
@@ -132,11 +138,11 @@ export default function SettingsView({
 
       {/* Members */}
       <section className="card p-5">
-        <h2 className="section-title mb-4">สมาชิกในบ้าน 👥</h2>
+        <h2 className="section-title mb-4">Household members 👥</h2>
         <ul className="space-y-2">
           {members.map((m) => (
-            <li key={m.profile_id} className="flex items-center justify-between rounded-2xl bg-slate-50 dark:bg-slate-800/50 px-4 py-3 text-sm">
-              <span className="font-medium text-slate-800 dark:text-slate-200">{m.display_name ?? "สมาชิก"}</span>
+            <li key={m.profile_id} className="flex items-center justify-between rounded-[1.35rem] border border-cream-200/70 bg-cream-50/75 px-4 py-3 text-sm shadow-soft dark:border-[#403833] dark:bg-[#352e2a]">
+              <span className="font-medium text-slate-800 dark:text-slate-200">{m.display_name ?? "Member"}</span>
               <span className="rounded-full bg-lucky-100 dark:bg-lucky-900/30 px-3 py-0.5 text-xs font-semibold text-lucky-700 dark:text-lucky-300">{m.role}</span>
             </li>
           ))}
@@ -145,15 +151,15 @@ export default function SettingsView({
 
       {/* Invite */}
       <section className="card p-5">
-        <h2 className="section-title mb-1">เชิญเพื่อน 💌</h2>
-        <p className="mb-3 text-xs text-slate-500 dark:text-slate-400">แชร์โคดหรือลิงก์นี้ให้คนอื่นเข้าร่วมบ้านได้</p>
+        <h2 className="section-title mb-1">Invite people 💌</h2>
+        <p className="mb-3 text-xs text-slate-500 dark:text-slate-400">Share this code or link to invite others to your household</p>
         <div className="flex items-center gap-2">
-          <code className="flex-1 rounded-2xl bg-slate-50 dark:bg-slate-800 px-4 py-2.5 text-sm font-mono text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">{code}</code>
+          <code className="flex-1 rounded-2xl border border-cream-200 bg-cream-50/75 px-4 py-2.5 font-mono text-sm text-slate-700 dark:border-[#403833] dark:bg-[#352e2a] dark:text-slate-300">{code}</code>
           <button onClick={copy} className="btn-outline">
             {copied ? <Check size={16} className="text-lucky-600" /> : <Copy size={16} />}
           </button>
           {isOwner && (
-            <button onClick={regenerate} disabled={busy} className="btn-outline" title="สร้างใหม่">
+            <button onClick={regenerate} disabled={busy} className="btn-outline" title="Regenerate">
               <RefreshCw size={16} className={busy ? "animate-spin" : ""} />
             </button>
           )}
@@ -162,11 +168,11 @@ export default function SettingsView({
 
       {/* Join another household */}
       <section className="card p-5">
-        <h2 className="section-title mb-3">เข้าร่วมบ้านอื่น 🏠</h2>
+        <h2 className="section-title mb-3">Join another household 🏠</h2>
         <div className="flex items-center gap-2">
-          <input className="input flex-1" placeholder="ใส่โคดเชิญ" value={joinCode} onChange={(e) => setJoinCode(e.target.value)} />
+          <input className="input flex-1" placeholder="Enter invite code" value={joinCode} onChange={(e) => setJoinCode(e.target.value)} />
           <button onClick={join} disabled={busy || !joinCode} className="btn-primary">
-            <UserPlus size={16} /> เข้าร่วม
+            <UserPlus size={16} /> Join
           </button>
         </div>
       </section>
@@ -176,18 +182,18 @@ export default function SettingsView({
         <h2 className="section-title mb-1">LINE Bot 💬</h2>
         <p className="mb-3 text-xs text-slate-500 dark:text-slate-400">
           {lineAccount
-            ? "ข้อความจาก LINE Bot จะบันทึกเข้าบ้านที่เลือกไว้"
-            : "ยังไม่ได้เชื่อมต่อ LINE — ล็อกอินด้วย LINE เพื่อเชื่อมต่อบัญชี"}
+            ? "Messages from LINE Bot will be recorded to the selected household"
+            : "Not connected to LINE — sign in with LINE to link your account"}
         </p>
         <select className="input" disabled={!lineAccount} value={defaultHh} onChange={(e) => saveLineDefault(e.target.value)}>
-          <option value="">เลือกบ้าน</option>
+          <option value="">Select household</option>
           {households.map((h) => <option key={h.id} value={h.id}>{h.name}</option>)}
         </select>
       </section>
 
       {/* Currency */}
       <section className="card p-5">
-        <h2 className="section-title mb-3">สกุลเงิน 💱</h2>
+        <h2 className="section-title mb-3">Currency 💱</h2>
         <div className="flex items-center gap-2">
           <select className="input w-40" value={currency} onChange={(e) => setCurrency(e.target.value)} disabled={!isOwner}>
             <option value="THB">THB (฿)</option>
@@ -198,7 +204,7 @@ export default function SettingsView({
           </select>
           {isOwner && (
             <button onClick={saveCurrency} disabled={busy} className="btn-primary">
-              {busy && <Loader2 size={16} className="animate-spin" />} บันทึก
+              {busy && <Loader2 size={16} className="animate-spin" />} Save
             </button>
           )}
         </div>

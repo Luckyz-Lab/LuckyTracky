@@ -25,8 +25,8 @@ function getMascotMood(balance: number): {
   if (balance > 5000) {
     return {
       slot: "celebrate",
-      label: "น้องอิ่มหนำสำราญ มีออร่าสีทอง ✨",
-      sub: "เงินเหลือเยอะมาก เก่งมากเลย!",
+      label: "Lucky is thriving, golden aura ✨",
+      sub: "Great balance — you're doing amazing!",
       gradient: "from-lucky-50 to-cream-100 dark:from-lucky-900/30 dark:to-slate-800/60",
       border: "border-lucky-200/80 dark:border-lucky-800/50",
     };
@@ -34,27 +34,27 @@ function getMascotMood(balance: number): {
   if (balance > 1000) {
     return {
       slot: "idle",
-      label: "น้องสบายดี เงินยังเหลือเฟือ 😸",
-      sub: "ยังโอเคอยู่นะ ใช้อย่างระวัง",
-      gradient: "from-sky-50 to-cream-100 dark:from-sky-900/20 dark:to-slate-800/60",
-      border: "border-sky-200/80 dark:border-sky-800/50",
+      label: "Lucky is comfortable 😸",
+      sub: "Still looking good — spend carefully.",
+      gradient: "from-sky-100 to-cream-100 dark:from-[#26303a] dark:to-[#2e2825]",
+      border: "border-sky-200/80 dark:border-[#33414d]",
     };
   }
   if (balance > 0) {
     return {
       slot: "sleeping",
-      label: "น้องเริ่มเหงื่อตก ใกล้หมดแล้วนะ 😰",
-      sub: "ประหยัดหน่อยได้เลย~",
+      label: "Lucky is getting nervous 😰",
+      sub: "Running low — try to save a bit.",
       gradient: "from-peach-50 to-cream-100 dark:from-orange-900/20 dark:to-slate-800/60",
       border: "border-peach-200/80 dark:border-orange-800/50",
     };
   }
   return {
     slot: "shocked",
-    label: "แงงง ช็อตแล้วเมี้ยว! 🙀",
-    sub: "เดือนนี้หมดแล้ว ไม่เป็นไร เดือนหน้าสู้ใหม่!",
-    gradient: "from-rose-50 to-cream-100 dark:from-rose-900/20 dark:to-slate-800/60",
-    border: "border-rose-200/80 dark:border-rose-800/50",
+    label: "Oh no, Lucky is shocked! 🙀",
+    sub: "Budget's gone — no worries, next month!",
+    gradient: "from-peach-50 to-cream-100 dark:from-[#3a201a] dark:to-[#2e2825]",
+    border: "border-peach-200/80 dark:border-[#5a2e26]",
   };
 }
 
@@ -63,9 +63,9 @@ export default function MascotWidget({ balance, dailyRemaining, currency }: Prop
   const mood = useMemo(() => getMascotMood(balance), [balance]);
 
   const dailyText = useMemo(() => {
-    if (dailyRemaining > 0) return `วันนี้ใช้ได้อีก ${fmt(dailyRemaining, currency)}`;
-    if (dailyRemaining === 0) return "วันนี้หมดพอดีเป๊ะ!";
-    return "วันนี้ใช้เกินแล้วน้าา ~";
+    if (dailyRemaining > 0) return `${fmt(dailyRemaining, currency)} left today`;
+    if (dailyRemaining === 0) return "Exactly on budget today!";
+    return "Over budget today 😬";
   }, [dailyRemaining, currency]);
 
   return (
@@ -87,9 +87,9 @@ export default function MascotWidget({ balance, dailyRemaining, currency }: Prop
         </p>
         <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">{mood.sub}</p>
       </div>
-      <div className="w-full rounded-2xl bg-white/70 dark:bg-slate-800/60 px-4 py-2.5 text-center border border-white/80 dark:border-slate-700/60 shadow-soft">
-        <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">วันนี้ใช้ได้</p>
-        <p className={`font-display text-lg font-bold mt-0.5 ${dailyRemaining >= 0 ? "text-lucky-600 dark:text-lucky-400" : "text-rose-500 dark:text-rose-400"}`}>
+      <div className="w-full rounded-2xl border border-cream-200 bg-cream-50/75 px-4 py-2.5 text-center shadow-soft dark:border-[#403833] dark:bg-[#352e2a]">
+        <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Today&apos;s budget</p>
+        <p className={`font-display text-lg font-bold mt-0.5 ${dailyRemaining >= 0 ? "text-[#5f7a54] dark:text-[#9cb88f]" : "text-peach-600 dark:text-peach-300"}`}>
           {dailyText}
         </p>
       </div>

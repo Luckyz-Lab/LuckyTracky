@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import type { Category, Budget } from "@/lib/supabase/types";
 import { getCategoryTone, getCategoryEmoji } from "@/lib/category-colors";
 import { formatMoney, monthLabel } from "@/lib/utils";
+import CatDecor from "./CatDecor";
 
 interface BudgetRow extends Budget {
   category_name: string;
@@ -57,21 +58,23 @@ export default function BudgetsView({
   return (
     <div className="space-y-6">
       {/* Header */}
-      <header className="flex flex-col gap-3 border-b border-lucky-100/60 dark:border-slate-800 pb-5">
-        <div>
-          <h1 className="page-title">งบประมาณ 💰</h1>
-          <p className="page-subtitle">กำหนดลิมิตรายจ่ายตามหมวดหมู่ — {monthLabel(month)}</p>
+      <header className="relative overflow-hidden rounded-[2.25rem] border border-cream-200/80 bg-gradient-to-br from-cream-50 via-lucky-50 to-cream-100 p-5 shadow-puff dark:border-[#403833] dark:from-[#2e2825] dark:via-[#352e2a] dark:to-[#241f1c]">
+        <div className="pointer-events-none absolute -right-14 -top-14 h-48 w-48 rounded-full bg-lucky-200/35 blur-3xl" />
+        <CatDecor pose="sit" size={104} className="absolute bottom-0 right-8 hidden opacity-90 md:block" />
+        <div className="relative max-w-xl">
+          <p className="text-xs font-bold uppercase tracking-[0.22em] text-lucky-500">Budget studio</p>
+          <h1 className="mt-2 font-display text-4xl font-bold tracking-tight text-lucky-900 dark:text-cream-50">Clay budget meters</h1>
+          <p className="page-subtitle">Set spending limits by category — {monthLabel(month)}</p>
         </div>
-        {/* Over-budget alert */}
         <AnimatePresence>
           {overCount > 0 && (
             <motion.div
               initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}
-              className="flex items-center gap-3 rounded-2xl bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-800/50 px-4 py-3"
+              className="relative mt-4 flex items-center gap-3 rounded-2xl border border-peach-200 bg-peach-50 px-4 py-3 dark:border-[#5a2e26] dark:bg-[#3a201a]"
             >
               <span className="text-2xl">🙀</span>
-              <p className="text-sm font-semibold text-rose-700 dark:text-rose-300">
-                แงงง ช็อตแล้วเมี้ยว! {overCount} หมวดเกินงบแล้ว 🙀
+              <p className="text-sm font-semibold text-peach-700 dark:text-peach-300">
+                Watch out! {overCount} budget(s) exceeded 🙀
               </p>
             </motion.div>
           )}
@@ -79,9 +82,9 @@ export default function BudgetsView({
       </header>
 
       {/* Add budget form */}
-      <section className="card flex flex-wrap items-end gap-3 p-5">
+      <section className="card grid gap-4 p-5 lg:grid-cols-[1fr_180px_auto] lg:items-end">
         <div className="min-w-[180px] flex-1">
-          <label className="label">หมวดหมู่</label>
+          <label className="label">Category</label>
           <select className="input" value={categoryId} onChange={(e) => setCategoryId(e.target.value)}>
             {expenseCategories.map((c) => (
               <option key={c.id} value={c.id}>{getCategoryEmoji(c.name)} {c.name}</option>
@@ -89,23 +92,23 @@ export default function BudgetsView({
           </select>
         </div>
         <div className="w-44">
-          <label className="label">ลิมิตต่อเดือน (฿)</label>
+          <label className="label">Monthly limit (฿)</label>
           <input className="input" type="number" value={limit} onChange={(e) => setLimit(e.target.value)} placeholder="0" />
         </div>
         <button onClick={add} disabled={saving || !limit} className="btn-primary">
-          {saving ? <Loader2 size={16} className="animate-spin" /> : "➕ ตั้งงบ"}
+          {saving ? <Loader2 size={16} className="animate-spin" /> : "➕ Set budget"}
         </button>
       </section>
 
       {/* Budget meters */}
       <section className="card p-5">
         {budgets.length === 0 ? (
-          <div className="flex flex-col items-center gap-3 py-10 text-center">
-            <span className="text-4xl">💸</span>
-            <p className="text-sm text-slate-500 dark:text-slate-400">ยังไม่ได้ตั้งงบประมาณเดือนนี้เลย ~</p>
+          <div className="flex flex-col items-center gap-3 rounded-[1.5rem] border-2 border-dashed border-cream-200 bg-cream-50/70 py-10 text-center dark:border-[#403833] dark:bg-[#352e2a]">
+            <CatDecor pose="sleep" size={90} />
+            <p className="text-sm text-slate-500 dark:text-slate-400">No budgets set for this month yet</p>
           </div>
         ) : (
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
             <AnimatePresence>
               {budgets.map((b) => {
                 const pct = b.limit_amount ? Math.round((b.spent / Number(b.limit_amount)) * 100) : 0;
@@ -113,7 +116,7 @@ export default function BudgetsView({
                 const emoji = getCategoryEmoji(b.category_name);
                 const isOver = pct >= 100;
                 const isWarn = pct >= 85 && pct < 100;
-                const barColor = isOver ? "#e11d48" : isWarn ? "#d97706" : tone.fill;
+                const barColor = isOver ? "#c0685e" : isWarn ? "#d9a45b" : tone.fill;
 
                 return (
                   <motion.div
@@ -122,10 +125,10 @@ export default function BudgetsView({
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.9 }}
-                    className={`rounded-2xl border p-4 space-y-3 transition-colors ${
+                    className={`space-y-3 rounded-[1.6rem] border p-4 shadow-soft transition-all hover:-translate-y-0.5 ${
                       isOver
-                        ? "border-rose-200 bg-rose-50 dark:border-rose-900/50 dark:bg-rose-950/30"
-                        : "border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800/50"
+                        ? "border-peach-200 bg-peach-50 dark:border-[#5a2e26] dark:bg-[#3a201a]"
+                        : "border-cream-200 bg-cream-50/75 dark:border-[#403833] dark:bg-[#352e2a]"
                     }`}
                   >
                     <div className="flex items-center justify-between gap-2">
@@ -145,18 +148,18 @@ export default function BudgetsView({
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
                         <span className={`metric-number text-sm font-bold ${
-                          isOver ? "text-rose-600 dark:text-rose-400" : isWarn ? "text-amber-600 dark:text-amber-400" : "text-slate-600 dark:text-slate-300"
+                          isOver ? "text-peach-600 dark:text-peach-300" : isWarn ? "text-grape-500 dark:text-grape-300" : "text-slate-600 dark:text-slate-300"
                         }`}>
                           {pct}%{isOver ? " 🙀" : isWarn ? " ⚠️" : ""}
                         </span>
-                        <button onClick={() => remove(b.id)} className="rounded-full p-1.5 text-slate-300 hover:bg-rose-50 dark:hover:bg-rose-900/30 hover:text-rose-500 transition-colors">
+                        <button onClick={() => remove(b.id)} className="rounded-full p-1.5 text-slate-300 transition-colors hover:bg-peach-50 hover:text-peach-600 dark:hover:bg-[#5a2e26]">
                           <Trash2 size={14} />
                         </button>
                       </div>
                     </div>
 
                     {/* Progress bar */}
-                    <div className="h-3 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-700">
+                    <div className="h-3 overflow-hidden rounded-full bg-cream-200 dark:bg-[#403833]">
                       <motion.div
                         className="h-full rounded-full"
                         initial={{ width: 0 }}
@@ -167,13 +170,13 @@ export default function BudgetsView({
                     </div>
 
                     {isOver && (
-                      <p className="text-xs font-medium text-rose-600 dark:text-rose-400">
-                        เกินงบ {formatMoney(b.spent - Number(b.limit_amount), currency)} — ระวังหน่อยนะ!
+                      <p className="text-xs font-medium text-peach-600 dark:text-peach-300">
+                        Over by {formatMoney(b.spent - Number(b.limit_amount), currency)} — watch out!
                       </p>
                     )}
                     {isWarn && !isOver && (
-                      <p className="text-xs font-medium text-amber-600 dark:text-amber-400">
-                        ใกล้เต็มแล้ว เหลืออีก {formatMoney(Number(b.limit_amount) - b.spent, currency)}
+                      <p className="text-xs font-medium text-grape-500 dark:text-grape-300">
+                        Almost full — {formatMoney(Number(b.limit_amount) - b.spent, currency)} left
                       </p>
                     )}
                   </motion.div>

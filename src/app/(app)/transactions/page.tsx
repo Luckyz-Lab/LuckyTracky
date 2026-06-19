@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 export default async function TransactionsPage() {
   const ctx = await getHouseholdContext();
   if (!ctx) redirect("/login");
-  if (!ctx.activeHousehold) return <p className="text-slate-500 dark:text-slate-400">ยังไม่มีบ้าน — สร้างบ้านก่อนนะเมี้ยว 🐱</p>;
+  if (!ctx.activeHousehold) return <p className="text-slate-500 dark:text-slate-400">No household found — please create one first.</p>;
 
   const supabase = createClient();
   const { data: categories } = await supabase

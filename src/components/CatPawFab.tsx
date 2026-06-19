@@ -9,7 +9,7 @@ interface CatPawFabProps {
   label?: string;
 }
 
-export default function CatPawFab({ onClick, label = "เพิ่มรายการ" }: CatPawFabProps) {
+export default function CatPawFab({ onClick, label = "Add entry" }: CatPawFabProps) {
   const { play } = useSound();
 
   function handleClick() {

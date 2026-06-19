@@ -14,7 +14,7 @@ export default function AppLoading() {
             />
           ))}
         </div>
-        <p className="font-display text-sm text-slate-400">กำลังโหลด...</p>
+        <p className="font-display text-sm text-slate-400">Loading...</p>
       </div>
     </div>
   );
