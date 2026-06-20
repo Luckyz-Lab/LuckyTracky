@@ -70,12 +70,11 @@ export default function ReceiptsView({
 
   return (
     <div className="space-y-6">
-      <header className="relative overflow-hidden rounded-[2rem] border-2 border-orange-100 bg-white p-6 shadow-soft dark:border-slate-700 dark:bg-slate-900">
-        <div className="pointer-events-none absolute -right-14 -top-14 h-48 w-48 rounded-full bg-lucky-200/35 blur-3xl" />
+      <header className="page-header relative overflow-hidden">
         <CatDecor pose="sit" size={108} className="absolute bottom-0 right-8 hidden opacity-90 md:block" />
         <div className="relative max-w-xl">
           <p className="text-xs font-bold uppercase tracking-[0.22em] text-lucky-500">Receipt scanner</p>
-          <h1 className="mt-2 font-display text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">Lucky reads receipts</h1>
+          <h1 className="mt-2 font-display text-3xl font-bold text-ink-strong sm:text-4xl">Lucky reads receipts</h1>
           <p className="page-subtitle">Upload a slip or receipt and Lucky will read it and log it automatically</p>
         </div>
       </header>

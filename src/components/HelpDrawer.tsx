@@ -34,7 +34,7 @@ export default function HelpDrawer() {
     <AnimatePresence>
       {open && (
         <motion.div
-          className="fixed inset-0 z-[200]"
+          className="fixed inset-0 z-help"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -48,13 +48,13 @@ export default function HelpDrawer() {
             role="dialog"
             aria-modal="true"
             aria-labelledby="help-title"
-            className="absolute inset-y-0 right-0 flex h-dvh w-full max-w-md flex-col overflow-hidden border-l-2 border-slate-100 bg-white shadow-2xl dark:border-slate-800 dark:bg-[#0f162a]"
+            className="absolute inset-y-0 right-0 flex h-dvh w-full max-w-md flex-col overflow-hidden border-l border-line bg-surface shadow-2xl"
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", stiffness: 340, damping: 34 }}
           >
-            <header className="relative z-10 flex shrink-0 items-start justify-between gap-4 border-b-2 border-slate-100 bg-white p-5 dark:border-slate-800 dark:bg-[#0f162a]">
+            <header className="relative z-10 flex shrink-0 items-start justify-between gap-4 border-b border-line bg-surface p-5">
               <div className="min-w-0">
                 <p className="text-xs font-bold uppercase tracking-[0.18em] text-orange-500">LuckyTracky guide</p>
                 <h2 id="help-title" className="mt-1 font-display text-2xl font-bold text-slate-900 dark:text-slate-50">
@@ -72,12 +72,12 @@ export default function HelpDrawer() {
                 <X size={19} />
               </button>
             </header>
-            <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain bg-[#faf8f5] p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] dark:bg-[#090e1d]">
+            <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain bg-canvas p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
               <ol className="space-y-3">
                 {TOPICS.map((topic, index) => {
                   const Icon = topic.icon;
                   return (
-                    <li key={topic.title} className="flex gap-4 rounded-2xl border-2 border-slate-100 bg-white p-4 dark:border-slate-800 dark:bg-[#0f162a]">
+                    <li key={topic.title} className="flex gap-4 rounded-card border border-line bg-surface p-4">
                       <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-orange-50 text-orange-600 dark:bg-orange-950/40 dark:text-orange-300">
                         <Icon size={19} />
                       </span>
@@ -102,7 +102,7 @@ export default function HelpDrawer() {
       <button
         aria-label="Open help"
         onClick={() => setOpen(true)}
-        className="flex h-11 w-11 items-center justify-center rounded-full border-2 border-slate-100 bg-white text-slate-600 transition-colors hover:border-orange-200 hover:text-orange-600 focus:outline-none focus:ring-4 focus:ring-orange-100 dark:border-slate-800 dark:bg-[#0f162a] dark:text-slate-300"
+        className="flex h-11 w-11 items-center justify-center rounded-full border border-line bg-surface text-ink transition-colors hover:border-primary/35 hover:text-primary focus:outline-none focus:ring-4 focus:ring-primary/15"
       >
         <HelpCircle size={18} />
       </button>

@@ -98,7 +98,7 @@ export default function MascotWidget({ balance, dailyRemaining, currency }: Prop
       </div>
       <div className="w-full rounded-2xl border border-cream-200 bg-cream-50/75 px-4 py-2.5 text-center shadow-soft dark:border-[#403833] dark:bg-[#352e2a]">
         <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Today&apos;s budget</p>
-        <p className={`font-display text-lg font-bold mt-0.5 ${dailyRemaining >= 0 ? "text-[#5f7a54] dark:text-[#9cb88f]" : "text-peach-600 dark:text-peach-300"}`}>
+        <p className={`font-display text-lg font-bold mt-0.5 ${dailyRemaining >= 0 ? "text-positive" : "text-negative"}`}>
           {dailyText}
         </p>
       </div>

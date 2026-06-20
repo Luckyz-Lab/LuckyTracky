@@ -23,12 +23,11 @@ export default async function ReportsPage() {
 
   return (
     <div className="space-y-6">
-      <header className="relative overflow-hidden rounded-[2rem] border-2 border-orange-100 bg-white p-6 shadow-soft dark:border-slate-700 dark:bg-slate-900">
-        <div className="pointer-events-none absolute -right-14 -top-14 h-48 w-48 rounded-full bg-lucky-200/35 blur-3xl" />
+      <header className="page-header relative overflow-hidden">
         <CatDecor pose="sit" size={104} className="absolute bottom-0 right-8 hidden opacity-90 md:block" />
         <div className="relative max-w-xl">
           <p className="text-xs font-bold uppercase tracking-[0.22em] text-lucky-500">Interactive Mew-lytics</p>
-          <h1 className="mt-2 font-display text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">Monthly money patterns</h1>
+          <h1 className="mt-2 font-display text-3xl font-bold text-ink-strong sm:text-4xl">Monthly money patterns</h1>
           <p className="page-subtitle">6-month trend and month-over-month comparison</p>
         </div>
       </header>
@@ -94,7 +93,7 @@ function CompareCard({
       <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">{title} this month</p>
       <p className="metric-number mt-1 text-2xl text-slate-900 dark:text-slate-100">{formatMoney(current, currency)}</p>
       <p className={`mt-2 flex items-center gap-1 text-sm ${
-        diff === 0 ? "text-slate-400 dark:text-slate-500" : good ? "text-[#5f7a54] dark:text-[#9cb88f]" : "text-peach-600 dark:text-peach-300"
+        diff === 0 ? "text-ink-muted" : good ? "text-positive" : "text-negative"
       }`}>
         {diff === 0 ? <Minus size={14} /> : up ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
         {diff === 0 ? "No change" : `${up ? "+" : ""}${formatMoney(diff, currency)} vs last month`}
@@ -109,8 +108,8 @@ function DeltaBadge({ value, currency }: { value: number; currency: string }) {
   return (
     <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${
       up
-        ? "bg-peach-50 dark:bg-[#3a201a] text-peach-600 dark:text-peach-300"
-        : "bg-[#eef2ea] dark:bg-[#2a3326] text-[#5f7a54] dark:text-[#9cb88f]"
+        ? "bg-negative-soft text-negative"
+        : "bg-positive-soft text-positive"
     }`}>
       {up ? "+" : ""}{formatMoney(value, currency)}
     </span>

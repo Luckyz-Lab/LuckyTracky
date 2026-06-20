@@ -109,11 +109,10 @@ export default function TransactionsView({ householdId, currency, categories, in
   return (
     <div className="space-y-5">
       {/* Header */}
-      <header className="relative overflow-hidden rounded-[2rem] border-2 border-orange-100 bg-white p-6 shadow-soft dark:border-slate-700 dark:bg-slate-900 sm:flex sm:items-end sm:justify-between">
-        <div className="pointer-events-none absolute -right-12 -top-16 h-48 w-48 rounded-full bg-lucky-200/40 blur-3xl" />
+      <header className="page-header relative overflow-hidden sm:flex sm:items-end sm:justify-between">
         <div className="relative">
           <p className="text-xs font-bold uppercase tracking-[0.22em] text-lucky-500">Money logbook</p>
-          <h1 className="mt-2 font-display text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">Transactions</h1>
+          <h1 className="mt-2 font-display text-3xl font-bold text-ink-strong sm:text-4xl">Transactions</h1>
           <p className="page-subtitle">{rows.length} total entries in a soft clay timeline</p>
         </div>
         <div className="relative mt-4 flex gap-2 sm:mt-0">
@@ -209,7 +208,7 @@ export default function TransactionsView({ householdId, currency, categories, in
                   <button
                     className={`btn text-sm py-2 transition-all ${
                       form.type === "expense"
-                        ? "bg-peach-500 text-white shadow-puff-peach"
+                        ? "bg-negative text-white shadow-card"
                         : "text-slate-500 dark:text-slate-400 hover:text-slate-700"
                     }`}
                     onClick={() => setForm((f) => ({ ...f, type: "expense", category_name: "อื่นๆ" }))}
@@ -219,7 +218,7 @@ export default function TransactionsView({ householdId, currency, categories, in
                   <button
                     className={`btn text-sm py-2 transition-all ${
                       form.type === "income"
-                        ? "bg-[#7e9b74] text-white shadow-puff"
+                        ? "bg-positive text-white shadow-card"
                         : "text-slate-500 dark:text-slate-400 hover:text-slate-700"
                     }`}
                     onClick={() => setForm((f) => ({ ...f, type: "income", category_name: "อื่นๆ" }))}

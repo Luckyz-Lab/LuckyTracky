@@ -17,6 +17,7 @@ import {
   Trophy,
   MessageSquare,
   Sparkles,
+  Palette,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -32,6 +33,7 @@ const NAV = [
   { href: "/achievements", label: "Achievements", icon: Trophy },
   { href: "/assistant", label: "AI Assistant", icon: MessageSquare },
   { href: "/mascot", label: "Mascot Studio", icon: Sparkles },
+  { href: "/appearance", label: "Appearance", icon: Palette },
   { href: "/settings", label: "Settings", icon: Settings },
 ];
 

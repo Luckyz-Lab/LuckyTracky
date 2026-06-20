@@ -63,13 +63,13 @@ export default function RecurringExpensesView({ categories, currency }: { catego
 
   return (
     <div className="space-y-5">
-      <header className="relative overflow-hidden rounded-[2rem] border-2 border-orange-100 bg-white p-6 shadow-soft dark:border-slate-700 dark:bg-slate-900 sm:flex sm:items-end sm:justify-between">
-        <div className="relative max-w-2xl"><p className="text-xs font-bold uppercase tracking-[0.18em] text-lucky-500">Scheduled cash flow</p><h1 className="mt-2 font-display text-4xl font-extrabold text-slate-900 dark:text-white">Recurring expenses</h1><p className="page-subtitle">Track subscriptions, bills and repeated income before they affect the balance.</p></div>
+      <header className="page-header relative overflow-hidden sm:flex sm:items-end sm:justify-between">
+        <div className="relative max-w-2xl"><p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Scheduled cash flow</p><h1 className="mt-2 font-display text-3xl font-bold text-ink-strong sm:text-4xl">Recurring expenses</h1><p className="page-subtitle">Track subscriptions, bills and repeated income before they affect the balance.</p></div>
         <button onClick={() => setOpen(true)} className="btn-primary relative mt-4 sm:mt-0"><Plus size={17} />New rule</button>
       </header>
 
       <section className="grid gap-4 md:grid-cols-[1.3fr_0.7fr]">
-        <div className="relative overflow-hidden rounded-[2rem] bg-[#3d342e] p-6 text-cream-50 shadow-pop dark:bg-[#171311]"><div className="absolute right-0 top-0 h-40 w-40 rounded-full bg-lucky-300/10 blur-3xl" /><span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-lucky-300/20 text-lucky-200"><CalendarClock size={21} /></span><p className="mt-5 text-xs font-semibold uppercase tracking-[0.18em] text-cream-200/70">Projected monthly outflow</p><p className="metric-number mt-2 text-3xl text-cream-50">{formatMoney(monthlyOutflow, currency)}</p><p className="mt-2 text-sm leading-6 text-cream-200/70">Normalized from weekly, monthly and annual schedules.</p></div>
+        <div className="rounded-card bg-ink-strong p-6 text-surface shadow-card"><span className="flex h-11 w-11 items-center justify-center rounded-control bg-surface/15 text-surface"><CalendarClock size={21} /></span><p className="mt-5 text-xs font-semibold uppercase tracking-[0.18em] text-surface/70">Projected monthly outflow</p><p className="metric-number mt-2 text-3xl text-surface">{formatMoney(monthlyOutflow, currency)}</p><p className="mt-2 text-sm leading-6 text-surface/70">Normalized from weekly, monthly and annual schedules.</p></div>
         <div className="card p-6"><span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-lucky-100 text-lucky-700 dark:bg-[#403833] dark:text-lucky-300"><Repeat2 size={21} /></span><p className="mt-5 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Active schedules</p><p className="metric-number mt-2 text-3xl text-slate-900 dark:text-slate-50">{activeCount}</p><p className="mt-2 text-sm text-slate-500 dark:text-slate-400">of {rules.length} configured rules</p></div>
       </section>
 

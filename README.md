@@ -55,6 +55,15 @@ cp .env.example .env.local
 
 In the Supabase SQL editor, run the contents of `supabase/schema.sql`. This creates all tables, enums, RLS policies, the new-user trigger (auto profile + household + invite code + seeded categories), and the `join_household_by_code` RPC.
 
+For an existing project, apply migrations in order. The appearance customizer requires:
+
+```text
+supabase/migrations/20260619_product_features.sql
+supabase/migrations/20260620_theme_system.sql
+```
+
+The second migration adds display mode and validated JSON theme overrides to `profile_preferences`.
+
 ### 4. Configure auth providers (optional)
 
 - **Google:** enable the Google provider in Supabase Auth and set the redirect URL to `<site>/auth/callback`.

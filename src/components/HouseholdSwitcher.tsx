@@ -47,7 +47,7 @@ export default function HouseholdSwitcher({
       </button>
 
       {open && (
-        <div className="absolute z-20 mt-2 w-full overflow-hidden rounded-2xl border-2 border-slate-100 bg-white shadow-pop dark:border-slate-700 dark:bg-slate-900">
+        <div className="absolute z-20 mt-2 w-full overflow-hidden rounded-control border border-line bg-surface shadow-card">
           {households.map((h) => (
             <button
               key={h.id}

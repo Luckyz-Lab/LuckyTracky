@@ -29,7 +29,7 @@ export function DonutChart({ data }: { data: { category: string; amount: number 
           innerRadius={62}
           outerRadius={92}
           paddingAngle={3}
-          stroke="#ffffff"
+          stroke="rgb(var(--ui-surface))"
           strokeWidth={3}
         >
           {data.map((entry) => (
@@ -40,12 +40,14 @@ export function DonutChart({ data }: { data: { category: string; amount: number 
           formatter={(v: number) => v.toLocaleString()}
           contentStyle={{
             borderRadius: 12,
-            border: "1px solid #f0d0cc",
-            boxShadow: "0 12px 28px rgba(117, 99, 89, 0.18)",
+            background: "rgb(var(--ui-surface))",
+            color: "rgb(var(--ui-text))",
+            border: "1px solid rgb(var(--ui-border))",
+            boxShadow: "var(--ui-card-shadow)",
             fontSize: 12,
           }}
         />
-        <Legend iconType="circle" wrapperStyle={{ fontSize: 12, color: "#475569", paddingTop: 12 }} />
+        <Legend iconType="circle" wrapperStyle={{ fontSize: 12, color: "rgb(var(--ui-text-muted))", paddingTop: 12 }} />
       </PieChart>
     </ResponsiveContainer>
   );
@@ -59,13 +61,13 @@ export function TrendChart({
   return (
     <ResponsiveContainer width="100%" height={300}>
       <BarChart data={data} barGap={4}>
-        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-        <XAxis dataKey="month" tick={{ fontSize: 12, fill: "#64748b" }} axisLine={false} tickLine={false} />
-        <YAxis tick={{ fontSize: 12, fill: "#64748b" }} axisLine={false} tickLine={false} />
-        <Tooltip formatter={(v: number) => v.toLocaleString()} />
-        <Legend wrapperStyle={{ fontSize: 12, color: "#475569" }} />
-        <Bar dataKey="income" name="Income" fill="#7e9b74" radius={[6, 6, 0, 0]} />
-        <Bar dataKey="expense" name="Expense" fill="#c0685e" radius={[6, 6, 0, 0]} />
+        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgb(var(--ui-border))" />
+        <XAxis dataKey="month" tick={{ fontSize: 12, fill: "rgb(var(--ui-text-muted))" }} axisLine={false} tickLine={false} />
+        <YAxis tick={{ fontSize: 12, fill: "rgb(var(--ui-text-muted))" }} axisLine={false} tickLine={false} />
+        <Tooltip formatter={(v: number) => v.toLocaleString()} contentStyle={{ background: "rgb(var(--ui-surface))", color: "rgb(var(--ui-text))", border: "1px solid rgb(var(--ui-border))", borderRadius: 12 }} />
+        <Legend wrapperStyle={{ fontSize: 12, color: "rgb(var(--ui-text-muted))" }} />
+        <Bar dataKey="income" name="Income" fill="rgb(var(--ui-success))" radius={[6, 6, 0, 0]} />
+        <Bar dataKey="expense" name="Expense" fill="rgb(var(--ui-danger))" radius={[6, 6, 0, 0]} />
       </BarChart>
     </ResponsiveContainer>
   );

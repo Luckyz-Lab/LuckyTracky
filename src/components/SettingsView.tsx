@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Coins, Copy, HousePlus, Mail, MessageCircle, RefreshCw, Check, UserPlus, Loader2, Users, Volume2, VolumeX } from "lucide-react";
+import Link from "next/link";
+import { Coins, Copy, HousePlus, Mail, MessageCircle, RefreshCw, Check, UserPlus, Loader2, Users, Volume2, VolumeX, Palette, ChevronRight } from "lucide-react";
 import type { Household } from "@/lib/supabase/types";
 import { useSound } from "./mascot/SoundProvider";
 import CatDecor from "./CatDecor";
@@ -102,12 +103,11 @@ export default function SettingsView({
 
   return (
     <div className="space-y-6">
-      <header className="relative overflow-hidden rounded-[2rem] border-2 border-orange-100 bg-white p-6 shadow-soft dark:border-slate-700 dark:bg-slate-900">
-        <div className="pointer-events-none absolute -right-14 -top-14 h-48 w-48 rounded-full bg-lucky-200/35 blur-3xl" />
+      <header className="page-header relative overflow-hidden">
         <CatDecor pose="sit" size={104} className="absolute bottom-0 right-8 hidden opacity-90 md:block" />
         <div className="relative max-w-xl">
           <p className="text-xs font-bold uppercase tracking-[0.22em] text-lucky-500">Household controls</p>
-          <h1 className="mt-2 font-display text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">Settings</h1>
+          <h1 className="mt-2 font-display text-3xl font-bold text-ink-strong sm:text-4xl">Settings</h1>
           <p className="page-subtitle">{household.name}</p>
         </div>
       </header>
@@ -115,6 +115,9 @@ export default function SettingsView({
       {/* App preferences */}
       <section className="card p-5 space-y-4">
         <h2 className="section-title">Preferences</h2>
+        <Link href="/appearance" className="flex min-h-14 items-center justify-between rounded-control border border-line bg-surface-muted px-4 py-3 transition hover:border-primary/35 hover:bg-primary-soft">
+          <span className="flex items-center gap-3"><span className="flex h-10 w-10 items-center justify-center rounded-control bg-primary-soft text-primary"><Palette size={18} /></span><span><span className="block text-sm font-semibold text-ink-strong">Appearance</span><span className="block text-xs text-ink-muted">Theme, colors, corners and elevation</span></span></span><ChevronRight size={18} className="text-ink-muted" />
+        </Link>
         <div className="flex items-center justify-between rounded-[1.35rem] border border-cream-200/70 bg-cream-50/75 px-4 py-3 shadow-soft dark:border-[#403833] dark:bg-[#352e2a]">
           <div className="flex items-center gap-3">
             {soundEnabled ? <Volume2 size={18} className="text-lucky-600" /> : <VolumeX size={18} className="text-slate-400" />}

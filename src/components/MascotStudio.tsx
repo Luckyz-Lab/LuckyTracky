@@ -1,16 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Cat, Check, Loader2, Palette, Save, Shuffle, Sparkles } from "lucide-react";
-import type { AppTheme, MascotAccessory, MascotBreed, ProfilePreferences } from "@/lib/supabase/types";
-
-const THEMES: Array<{ id: AppTheme; name: string; colors: string[] }> = [
-  { id: "classic", name: "Cozy Clay", colors: ["#fbf4f1", "#e6a9a3", "#756359"] },
-  { id: "calico", name: "Calico", colors: ["#fff8f0", "#d9824a", "#61534a"] },
-  { id: "siamese", name: "Siamese", colors: ["#f3efe9", "#9f8977", "#43362d"] },
-  { id: "black-cat", name: "Black Cat", colors: ["#171719", "#3b3b42", "#e6a9a3"] },
-  { id: "midnight", name: "Midnight", colors: ["#111827", "#334155", "#a9bcc6"] },
-];
+import { Cat, Check, Loader2, Save, Shuffle, Sparkles } from "lucide-react";
+import type { MascotAccessory, MascotBreed, ProfilePreferences } from "@/lib/supabase/types";
+import { DEFAULT_THEME_OVERRIDES } from "@/lib/theme";
 
 const COLORS = ["#FFEFE6", "#FB923C", "#E2E8F0", "#FEF3C7", "#D2C9BD", "#475569"];
 const BREEDS: MascotBreed[] = ["tabby", "siamese", "persian", "calico"];
@@ -18,6 +11,8 @@ const ACCESSORIES: MascotAccessory[] = ["none", "collar_bell", "royal_crown", "p
 
 const DEFAULTS: Omit<ProfilePreferences, "profile_id" | "updated_at"> = {
   theme: "classic",
+  theme_mode: "light",
+  theme_overrides: DEFAULT_THEME_OVERRIDES,
   mascot_name: "Lucky",
   mascot_breed: "tabby",
   mascot_color: "#FFEFE6",
@@ -81,7 +76,6 @@ export default function MascotStudio() {
           <fieldset><legend className="label">Breed</legend><div className="grid grid-cols-2 gap-2 sm:grid-cols-4">{BREEDS.map((breed) => <button key={breed} type="button" aria-pressed={form.mascot_breed === breed} onClick={() => setForm((current) => ({ ...current, mascot_breed: breed }))} className={`min-h-11 rounded-xl border px-3 text-sm font-semibold capitalize transition-colors ${form.mascot_breed === breed ? "border-lucky-400 bg-lucky-100 text-lucky-800 dark:bg-[#403833] dark:text-lucky-200" : "border-cream-200 text-slate-600 dark:border-[#403833] dark:text-slate-300"}`}>{breed}</button>)}</div></fieldset>
           <fieldset><legend className="label">Coat color</legend><div className="flex flex-wrap gap-3">{COLORS.map((color) => <button key={color} type="button" aria-label={`Use coat color ${color}`} aria-pressed={form.mascot_color === color} onClick={() => setForm((current) => ({ ...current, mascot_color: color }))} className={`flex h-11 w-11 items-center justify-center rounded-full border-2 transition-transform hover:scale-105 ${form.mascot_color === color ? "border-lucky-600" : "border-cream-200 dark:border-[#403833]"}`} style={{ backgroundColor: color }}>{form.mascot_color === color && <Check size={17} className="text-slate-900" />}</button>)}</div></fieldset>
           <div><label htmlFor="mascot-accessory" className="label">Accessory</label><select id="mascot-accessory" className="input capitalize" value={form.mascot_accessory} onChange={(event) => setForm((current) => ({ ...current, mascot_accessory: event.target.value as MascotAccessory }))}>{ACCESSORIES.map((accessory) => <option key={accessory} value={accessory}>{accessory.replaceAll("_", " ")}</option>)}</select></div>
-          <fieldset><legend className="label flex items-center gap-2"><Palette size={14} />Workspace theme</legend><div className="grid gap-2 sm:grid-cols-2">{THEMES.map((theme) => <button key={theme.id} type="button" aria-pressed={form.theme === theme.id} onClick={() => setForm((current) => ({ ...current, theme: theme.id }))} className={`flex min-h-12 items-center justify-between rounded-xl border px-3 text-left transition-colors ${form.theme === theme.id ? "border-lucky-400 bg-lucky-100 dark:bg-[#403833]" : "border-cream-200 dark:border-[#403833]"}`}><span className="text-sm font-semibold text-slate-700 dark:text-slate-200">{theme.name}</span><span className="flex -space-x-1">{theme.colors.map((color) => <span key={color} className="h-5 w-5 rounded-full border border-white/70" style={{ backgroundColor: color }} />)}</span></button>)}</div></fieldset>
           {error && <p role="alert" className="text-sm text-rose-700 dark:text-rose-300">{error}</p>}
           <button type="button" onClick={save} disabled={saving || !form.mascot_name.trim()} className="btn-primary w-full sm:w-auto">{saving ? <Loader2 className="animate-spin" size={16} /> : saved ? <Check size={16} /> : <Save size={16} />}{saving ? "Saving..." : saved ? "Saved" : "Save preferences"}</button>
         </div>

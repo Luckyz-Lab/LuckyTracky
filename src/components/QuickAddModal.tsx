@@ -150,7 +150,7 @@ export default function QuickAddModal({ open, householdId, onClose, onSaved }: Q
               </div>
 
               <label className="flex cursor-pointer items-start gap-3 rounded-2xl border border-cream-200 bg-cream-50/70 p-4 dark:border-[#403833] dark:bg-[#352e2a]">
-                <input type="checkbox" checked={recurring} onChange={(event) => setRecurring(event.target.checked)} className="mt-1 h-4 w-4 accent-[#c57168]" />
+                <input type="checkbox" checked={recurring} onChange={(event) => setRecurring(event.target.checked)} className="mt-1 h-4 w-4 accent-primary" />
                 <span className="flex-1"><span className="flex items-center gap-2 text-sm font-semibold text-slate-800 dark:text-slate-100"><Repeat2 size={16} />Repeat automatically</span><span className="mt-1 block text-xs leading-5 text-slate-500 dark:text-slate-400">Create a recurring rule after saving this entry.</span></span>
               </label>
               {recurring && (

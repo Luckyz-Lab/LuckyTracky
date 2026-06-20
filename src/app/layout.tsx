@@ -24,7 +24,7 @@ const thai = Noto_Sans_Thai({
 });
 
 export const metadata: Metadata = {
-  title: "LuckyTracky AI — Finance for Happy Cats",
+  title: "LuckyTracky AI - Finance for Happy Cats",
   description: "Track income and expenses with your cat Lucky by your side.",
 };
 

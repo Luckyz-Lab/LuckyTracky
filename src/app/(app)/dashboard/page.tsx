@@ -54,18 +54,15 @@ export default async function DashboardPage({ searchParams }: { searchParams: { 
 
   return (
     <div className="space-y-6">
-      <section
-        className="relative overflow-hidden rounded-[2rem] border-2 border-orange-100 bg-orange-50 p-6 shadow-soft md:p-8"
-        style={{ backgroundImage: "radial-gradient(rgba(249,115,22,.13) 1px, transparent 1px)", backgroundSize: "18px 18px" }}
-      >
+      <section className="relative overflow-hidden rounded-card border border-primary/20 bg-primary-soft p-6 shadow-card md:p-8">
         <div className="relative z-10 max-w-3xl">
-          <span className="inline-flex items-center gap-2 rounded-full bg-orange-500 px-3 py-1 text-[10px] font-extrabold uppercase tracking-[0.16em] text-white"><Sparkles size={12} />Live household workspace</span>
-          <h1 className="mt-4 font-display text-3xl font-extrabold tracking-tight text-slate-900 md:text-4xl">Welcome back to {ctx.activeHousehold.name}</h1>
+          <span className="inline-flex items-center gap-2 rounded-full bg-primary px-3 py-1 text-[10px] font-extrabold uppercase tracking-[0.16em] text-primary-contrast"><Sparkles size={12} />Live household workspace</span>
+          <h1 className="mt-4 font-display text-3xl font-bold text-ink-strong md:text-4xl">Welcome back to {ctx.activeHousehold.name}</h1>
           <p className="mt-2 max-w-2xl text-sm font-medium leading-6 text-slate-600">Your balance is {formatMoney(data.balance, currency)} this month. Keep daily entries accurate and Lucky will turn them into a clearer plan.</p>
-          <div className="mt-5 inline-flex max-w-2xl items-start gap-3 rounded-2xl border-2 border-orange-100 bg-white px-4 py-3 shadow-soft"><Lightbulb size={18} className="mt-0.5 shrink-0 text-amber-500" /><p className="text-sm leading-6 text-slate-600"><strong className="text-orange-600">Lucky&apos;s tip:</strong> {data.insights[0] ?? "Small entries matter. Log them while they are still fresh."}</p></div>
+          <div className="mt-5 inline-flex max-w-2xl items-start gap-3 rounded-control border border-primary/20 bg-surface px-4 py-3 shadow-card"><Lightbulb size={18} className="mt-0.5 shrink-0 text-caution" /><p className="text-sm leading-6 text-ink"><strong className="text-primary">Lucky&apos;s tip:</strong> {data.insights[0] ?? "Small entries matter. Log them while they are still fresh."}</p></div>
         </div>
-        <div className="absolute -bottom-4 right-4 hidden items-end gap-3 xl:flex"><div className="mb-8 rounded-2xl border-2 border-emerald-100 bg-white px-3 py-2 text-xs font-bold text-emerald-600 shadow-soft">Lucky is watching the numbers</div><Mascot slot={data.balance >= 0 ? "celebrate" : "shocked"} size={150} /></div>
-        <div className="relative z-10 mt-5 flex flex-wrap items-center gap-2"><span className="rounded-full border-2 border-orange-100 bg-white px-3 py-2 text-xs font-semibold text-slate-600">{monthLabel(month)}</span><MonthSwitcher month={month} /><AiSummaryButton householdId={ctx.activeHousehold.id} month={month} /></div>
+        <div className="absolute -bottom-4 right-4 hidden items-end gap-3 xl:flex"><div className="mb-8 rounded-control border border-positive/20 bg-surface px-3 py-2 text-xs font-bold text-positive shadow-card">Lucky is watching the numbers</div><Mascot slot={data.balance >= 0 ? "celebrate" : "shocked"} size={150} /></div>
+        <div className="relative z-10 mt-5 flex flex-wrap items-center gap-2"><span className="rounded-control border border-primary/20 bg-surface px-3 py-2 text-xs font-semibold text-ink">{monthLabel(month)}</span><MonthSwitcher month={month} /><AiSummaryButton householdId={ctx.activeHousehold.id} month={month} /></div>
       </section>
 
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -79,7 +76,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: { 
         <div className="card min-h-[430px] overflow-hidden xl:col-span-7"><ChatPanel householdId={ctx.activeHousehold.id} /></div>
         <div className="space-y-6 xl:col-span-5">
           <article className="card p-5">
-            <div className="flex items-start justify-between gap-4"><div><p className="text-xs font-bold uppercase tracking-[0.14em] text-slate-400">AI Financial Score</p><h2 className="mt-1 font-display text-xl font-extrabold text-slate-900 dark:text-white">Cat-tastic health</h2></div><span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-500"><Bot size={21} /></span></div>
+            <div className="flex items-start justify-between gap-4"><div><p className="text-xs font-bold uppercase tracking-[0.14em] text-ink-muted">AI Financial Score</p><h2 className="mt-1 font-display text-xl font-bold text-ink-strong">Cat-tastic health</h2></div><span className="flex h-11 w-11 items-center justify-center rounded-control bg-positive-soft text-positive"><Bot size={21} /></span></div>
             <div className="mt-5 flex items-center gap-5"><div className="relative flex h-28 w-28 shrink-0 items-center justify-center rounded-full border-[10px] border-emerald-100"><span className="metric-number text-3xl text-emerald-600">{financialScore}</span><span className="absolute bottom-3 text-[9px] font-bold text-slate-400">/100</span></div><div><p className="text-sm font-bold text-slate-800 dark:text-slate-100">Meow-meter</p><p className="mt-2 text-sm leading-6 text-slate-500 dark:text-slate-400">Based on savings rate and current budget health.</p></div></div>
           </article>
           <article className="card p-5"><div className="mb-4 flex items-center gap-3"><span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-50 text-blue-500"><Lightbulb size={19} /></span><div><h2 className="font-display text-lg font-extrabold">Smart Recommendations</h2><p className="text-xs text-slate-400">Generated from this month&apos;s data</p></div></div><ul className="space-y-3">{data.insights.slice(0, 3).map((insight, index) => <li key={index} className="flex gap-3 border-t border-slate-100 pt-3 first:border-0 first:pt-0"><span className="mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-orange-50 text-orange-500"><TrendingUp size={14} /></span><p className="text-sm leading-6 text-slate-600 dark:text-slate-300">{insight}</p></li>)}</ul></article>
@@ -95,7 +92,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: { 
       </section>
 
       <section className="card overflow-hidden">
-        <div className="flex items-center justify-between border-b-2 border-slate-100 p-5 dark:border-slate-800"><div><h2 className="font-display text-xl font-extrabold">Recent Claw-actions</h2><p className="text-sm text-slate-400">Latest household cash flow</p></div><Link href="/transactions" className="btn-outline min-h-10 px-4 py-2 text-xs"><ReceiptText size={15} />View all</Link></div>
+        <div className="flex items-center justify-between border-b border-line p-5"><div><h2 className="font-display text-xl font-bold text-ink-strong">Recent Claw-actions</h2><p className="text-sm text-ink-muted">Latest household cash flow</p></div><Link href="/transactions" className="btn-outline min-h-10 px-4 py-2 text-xs"><ReceiptText size={15} />View all</Link></div>
         {data.recent.length ? <div className="overflow-x-auto"><table className="w-full min-w-[680px] text-left"><thead className="bg-slate-50 text-[10px] font-bold uppercase tracking-[0.14em] text-slate-400 dark:bg-slate-800"><tr><th className="px-5 py-3">Details</th><th className="px-5 py-3">Category</th><th className="px-5 py-3">Date</th><th className="px-5 py-3 text-right">Amount</th></tr></thead><tbody className="divide-y divide-slate-100 dark:divide-slate-800">{data.recent.slice(0, 7).map((tx) => <TransactionRow key={tx.id} tx={tx} currency={currency} />)}</tbody></table></div> : <div className="py-12 text-center text-sm text-slate-400">No transactions yet.</div>}
       </section>
     </div>
@@ -104,7 +101,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: { 
 
 function MetricCard({ label, value, detail, icon, color }: { label: string; value: string; detail: string; icon: React.ReactNode; color: "orange" | "emerald" | "rose" | "sky" }) {
   const styles = { orange: "bg-orange-50 text-orange-500", emerald: "bg-emerald-50 text-emerald-500", rose: "bg-rose-50 text-rose-500", sky: "bg-sky-50 text-sky-500" }[color];
-  return <article className="card relative overflow-hidden p-5"><div className="flex items-start justify-between gap-4"><div><p className="text-[10px] font-extrabold uppercase tracking-[0.14em] text-slate-400">{label}</p><p className="metric-number mt-5 text-2xl text-slate-900 dark:text-white md:text-3xl">{value}</p></div><span className={`flex h-11 w-11 items-center justify-center rounded-2xl ${styles}`}>{icon}</span></div><p className="mt-3 text-xs font-medium text-slate-400">{detail}</p></article>;
+  return <article className="card relative overflow-hidden p-5"><div className="flex items-start justify-between gap-4"><div><p className="text-[10px] font-extrabold uppercase tracking-[0.14em] text-ink-muted">{label}</p><p className="metric-number mt-5 text-2xl text-ink-strong md:text-3xl">{value}</p></div><span className={`flex h-11 w-11 items-center justify-center rounded-control ${styles}`}>{icon}</span></div><p className="mt-3 text-xs font-medium text-ink-muted">{detail}</p></article>;
 }
 
 function CategoryLegend({ data, currency }: { data: { category: string; amount: number }[]; currency: string }) {

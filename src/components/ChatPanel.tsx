@@ -131,7 +131,7 @@ function Message({
   if (bubble.role === "user") {
     return (
       <div className="flex justify-end">
-        <div className="max-w-[80%] rounded-2xl rounded-br-sm bg-gradient-to-br from-lucky-300 to-lucky-500 px-3 py-2 text-sm text-white shadow-soft">
+        <div className="max-w-[80%] rounded-2xl rounded-br-sm bg-primary px-3 py-2 text-sm text-primary-contrast shadow-card">
           {bubble.text}
         </div>
       </div>
@@ -198,7 +198,7 @@ function TxCard({ tx, tone }: { tx: ChatTransactionPayload; tone: "saved" | "con
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           {income ? (
-            <ArrowDownCircle size={18} className="text-[#5f7a54] dark:text-[#9cb88f]" />
+            <ArrowDownCircle size={18} className="text-positive" />
           ) : (
             <ArrowUpCircle size={18} className="text-peach-600 dark:text-peach-300" />
           )}
@@ -209,7 +209,7 @@ function TxCard({ tx, tone }: { tx: ChatTransactionPayload; tone: "saved" | "con
             </p>
           </div>
         </div>
-        <p className={income ? "metric-number text-sm text-[#5f7a54] dark:text-[#9cb88f]" : "metric-number text-sm text-peach-600 dark:text-peach-300"}>
+        <p className={income ? "metric-number text-sm text-positive" : "metric-number text-sm text-negative"}>
           {income ? "+" : "-"}
           {tx.amount != null ? formatMoney(tx.amount) : "?"}
         </p>

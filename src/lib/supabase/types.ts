@@ -96,12 +96,23 @@ export interface RecurringRule {
 }
 
 export type AppTheme = "classic" | "calico" | "siamese" | "black-cat" | "midnight";
+export type ThemeMode = "light" | "dark" | "system";
+export interface ThemeOverrides {
+  primary: string | null;
+  canvas: string | null;
+  surface: string | null;
+  text: string | null;
+  radius: "compact" | "soft" | "rounded";
+  shadow: "flat" | "soft" | "lifted";
+}
 export type MascotBreed = "tabby" | "siamese" | "persian" | "calico";
 export type MascotAccessory = "none" | "collar_bell" | "royal_crown" | "party_hat" | "detective_cap";
 
 export interface ProfilePreferences {
   profile_id: string;
   theme: AppTheme;
+  theme_mode: ThemeMode;
+  theme_overrides: ThemeOverrides;
   mascot_name: string;
   mascot_breed: MascotBreed;
   mascot_color: string;

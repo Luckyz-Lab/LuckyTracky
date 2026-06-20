@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { monthlyEquivalent, nextRecurringDate } from "../recurring";
 import { unlockedAchievementKeys } from "../achievements";
+import { contrastRatio, effectiveThemeId, sanitizeThemeOverrides, themeVariables, THEME_PRESETS } from "../theme";
 
 describe("recurring schedules", () => {
   it("advances weekly, monthly and yearly schedules", () => {
@@ -29,5 +30,33 @@ describe("achievement rules", () => {
     });
     expect(keys).toEqual(expect.arrayContaining(["first-entry", "steady-tracker", "money-map", "budget-keeper", "goal-setter", "savings-streak", "assistant-friend"]));
     expect(keys).not.toContain("goal-finisher");
+  });
+});
+
+describe("workspace themes", () => {
+  it("ships complete accessible presets", () => {
+    expect(THEME_PRESETS).toHaveLength(5);
+    for (const preset of THEME_PRESETS) {
+      expect(contrastRatio(preset.palette.text, preset.palette.surface)).toBeGreaterThanOrEqual(4.5);
+      expect(contrastRatio(preset.palette.primary, preset.palette.onPrimary)).toBeGreaterThanOrEqual(4.5);
+      expect(themeVariables(preset.id)["--ui-primary"]).toMatch(/^\d+ \d+ \d+$/);
+    }
+  });
+
+  it("rejects unsafe override shapes", () => {
+    expect(sanitizeThemeOverrides({ primary: "red", radius: "huge", shadow: "glow" })).toEqual({
+      primary: null,
+      canvas: null,
+      surface: null,
+      text: null,
+      radius: "soft",
+      shadow: "soft",
+    });
+  });
+
+  it("pairs light presets with a readable dark workspace", () => {
+    expect(effectiveThemeId("classic", "dark")).toBe("midnight");
+    expect(effectiveThemeId("calico", "system", true)).toBe("black-cat");
+    expect(effectiveThemeId("midnight", "light")).toBe("siamese");
   });
 });

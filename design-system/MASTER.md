@@ -66,6 +66,14 @@ Use 28-32px for page titles, 18-22px for section titles, 14-16px for body text, 
 - Avoid nested cards. Sections are unframed unless they represent a discrete tool or repeated item.
 - Use the mascot only where it provides identity, status, or guidance; it is not generic decoration.
 
+## Theme Architecture
+
+All application chrome uses semantic CSS variables exposed through Tailwind tokens. Components must use `canvas`, `surface`, `surface-muted`, `ink`, `line`, `primary`, `positive`, `negative`, `caution`, and `informative` rather than literal palette colors.
+
+The supported presets are Lucky Orange, Calico, Siamese, Black Cat, and Midnight. User overrides may change primary, canvas, surface, text, card radius, and elevation. Text/surface and primary/button-label combinations must retain at least 4.5:1 contrast. Category colors and external brand colors remain centrally managed and are not user overrides.
+
+Appearance settings live at `/appearance`, preview locally, and persist only after the user selects **Save appearance**. Theme preferences are stored in `profile_preferences.theme`, `theme_mode`, and `theme_overrides`.
+
 ## Responsive Rules
 
 - No viewport-wide horizontal overflow at 375px, 768px, 1280px, or 1440px.
@@ -92,3 +100,4 @@ Use 28-32px for page titles, 18-22px for section titles, 14-16px for body text, 
 - [ ] Tests and production build pass.
 - [ ] Desktop and mobile layouts have no horizontal overflow.
 - [ ] Production database migration is applied before enabling recurring rules, preferences, and achievements.
+- [ ] Every preset is checked on `/dashboard`, `/appearance`, and one data-entry modal.

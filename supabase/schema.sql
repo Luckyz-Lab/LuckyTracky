@@ -137,6 +137,8 @@ create table if not exists recurring_rules (
 create table if not exists profile_preferences (
   profile_id uuid primary key references profiles(id) on delete cascade,
   theme text not null default 'classic' check (theme in ('classic', 'calico', 'siamese', 'black-cat', 'midnight')),
+  theme_mode text not null default 'light' check (theme_mode in ('light', 'dark', 'system')),
+  theme_overrides jsonb not null default '{"primary":null,"canvas":null,"surface":null,"text":null,"radius":"soft","shadow":"soft"}'::jsonb,
   mascot_name text not null default 'Lucky',
   mascot_breed text not null default 'tabby' check (mascot_breed in ('tabby', 'siamese', 'persian', 'calico')),
   mascot_color text not null default '#FFEFE6',

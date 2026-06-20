@@ -5,6 +5,30 @@
 :root {
   --background: 246 247 249;
   --foreground: 15 23 42;
+  --ui-canvas: 250 248 245;
+  --ui-surface: 255 255 255;
+  --ui-surface-muted: 248 250 252;
+  --ui-surface-elevated: 255 255 255;
+  --ui-text-strong: 15 23 42;
+  --ui-text: 51 65 85;
+  --ui-text-muted: 100 116 139;
+  --ui-border: 226 232 240;
+  --ui-border-strong: 203 213 225;
+  --ui-primary: 194 65 12;
+  --ui-primary-hover: 154 52 18;
+  --ui-primary-soft: 255 247 237;
+  --ui-on-primary: 255 255 255;
+  --ui-success: 4 120 87;
+  --ui-success-soft: 236 253 245;
+  --ui-danger: 190 18 60;
+  --ui-danger-soft: 255 241 242;
+  --ui-warning: 180 83 9;
+  --ui-warning-soft: 255 251 235;
+  --ui-info: 29 78 216;
+  --ui-info-soft: 239 246 255;
+  --ui-card-radius: 18px;
+  --ui-control-radius: 14px;
+  --ui-card-shadow: 0 8px 24px -16px rgb(15 23 42 / 0.28);
 }
 
 .dark {
@@ -23,39 +47,23 @@ body {
 }
 
 body {
-  color: rgb(var(--foreground));
+  color: rgb(var(--ui-text));
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  background-color: #faf8f5;
+  background-color: rgb(var(--ui-canvas));
 }
 
-.dark body {
-  background-color: #241f1c;
-  background-image:
-    radial-gradient(1100px 620px at -6% -12%, rgba(230, 169, 163, 0.14), transparent 60%),
-    radial-gradient(1000px 520px at 106% -6%, rgba(197, 113, 104, 0.12), transparent 55%),
-    radial-gradient(940px 600px at 112% 112%, rgba(217, 164, 91, 0.10), transparent 55%),
-    radial-gradient(940px 600px at -12% 116%, rgba(156, 127, 123, 0.12), transparent 55%);
+body [class*="tracking-"] {
+  letter-spacing: 0 !important;
 }
 
-.theme-calico body {
-  background-color: #fff8f0;
-  background-image: radial-gradient(900px 520px at 0% 0%, rgba(217, 130, 74, 0.18), transparent 60%), radial-gradient(900px 540px at 100% 100%, rgba(97, 83, 74, 0.12), transparent 60%);
+:where(button, a, input, select, textarea):focus-visible {
+  outline: 2px solid rgb(var(--ui-primary));
+  outline-offset: 2px;
 }
 
-.theme-siamese body {
-  background-color: #f3efe9;
-  background-image: radial-gradient(900px 520px at 100% 0%, rgba(159, 137, 119, 0.20), transparent 60%), radial-gradient(800px 500px at 0% 100%, rgba(67, 54, 45, 0.10), transparent 60%);
-}
-
-.theme-black-cat body {
-  background-color: #171719;
-  background-image: radial-gradient(900px 520px at 100% 0%, rgba(230, 169, 163, 0.12), transparent 60%);
-}
-
-.theme-midnight body {
-  background-color: #111827;
-  background-image: radial-gradient(900px 520px at 100% 0%, rgba(169, 188, 198, 0.12), transparent 60%);
+:where(button, a, input, select) {
+  touch-action: manipulation;
 }
 
 /* Soft rounded scrollbars */
@@ -64,13 +72,13 @@ body {
   height: 10px;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(230, 169, 163, 0.45);
+  background: rgb(var(--ui-primary) / 0.35);
   border-radius: 9999px;
   border: 2px solid transparent;
   background-clip: content-box;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(197, 113, 104, 0.60);
+  background: rgb(var(--ui-primary) / 0.55);
   background-clip: content-box;
 }
 ::-webkit-scrollbar-track {
@@ -91,38 +99,40 @@ body {
 
 @layer components {
   .glass {
-    @apply border-slate-200/70 bg-white/85 backdrop-blur-xl dark:border-slate-700 dark:bg-slate-900/85;
+    @apply border-line/70 bg-surface/85 backdrop-blur-xl;
   }
   .card {
-    @apply rounded-3xl border-2 border-slate-100 border-b-4 bg-white dark:border-slate-700 dark:bg-slate-900;
-    box-shadow: 0 7px 20px -14px rgba(15, 23, 42, 0.32);
+    @apply rounded-card border border-line bg-surface text-ink shadow-card;
   }
   .btn {
     @apply inline-flex min-h-10 items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-50 active:scale-95;
   }
   .btn-primary {
-    @apply btn bg-lucky-500 text-white shadow-puff hover:bg-lucky-600 hover:-translate-y-0.5 focus:outline-none focus:ring-4 focus:ring-lucky-200 dark:focus:ring-lucky-900/60;
+    @apply btn bg-primary text-primary-contrast shadow-card hover:bg-primary-hover hover:-translate-y-0.5 focus:outline-none focus:ring-4 focus:ring-primary/25;
   }
   .btn-ghost {
-    @apply btn text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-200 dark:focus:ring-slate-700;
+    @apply btn text-ink hover:bg-surface-muted focus:outline-none focus:ring-2 focus:ring-line-strong;
   }
   .btn-outline {
-    @apply btn border-2 border-slate-200 bg-white text-slate-700 shadow-sm hover:border-lucky-300 hover:bg-lucky-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-lucky-200;
+    @apply btn border border-line-strong bg-surface text-ink shadow-sm hover:border-primary/45 hover:bg-primary-soft focus:outline-none focus:ring-2 focus:ring-primary/25;
   }
   .input {
-    @apply w-full rounded-2xl border-2 border-slate-200 bg-slate-50 px-4 py-2.5 text-sm outline-none transition focus:border-lucky-400 focus:bg-white focus:ring-4 focus:ring-lucky-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:border-lucky-400 dark:focus:ring-lucky-900/40;
+    @apply w-full rounded-control border border-line-strong bg-surface-muted px-4 py-2.5 text-sm text-ink-strong outline-none transition placeholder:text-ink-muted focus:border-primary focus:bg-surface focus:ring-4 focus:ring-primary/15;
   }
   .label {
-    @apply mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400;
+    @apply mb-1 block text-xs font-semibold uppercase tracking-wide text-ink-muted;
   }
   .page-title {
-    @apply font-display text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-50 md:text-3xl;
+    @apply font-display text-2xl font-bold tracking-normal text-ink-strong md:text-3xl;
   }
   .page-subtitle {
-    @apply mt-1 text-sm leading-6 text-slate-500 dark:text-slate-400;
+    @apply mt-1 text-sm leading-6 text-ink-muted;
   }
   .section-title {
-    @apply font-display text-base font-semibold tracking-tight text-slate-800 dark:text-slate-100;
+    @apply font-display text-base font-semibold tracking-normal text-ink-strong;
+  }
+  .page-header {
+    @apply rounded-card border border-line bg-surface p-5 shadow-card sm:p-6;
   }
   .metric-number {
     @apply font-display font-bold tracking-tight tabular-nums;
